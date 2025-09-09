@@ -1,0 +1,1576 @@
+{
+  "createdAt": "2025-09-08T06:05:33.851Z",
+  "updatedAt": "2025-09-09T01:22:21.426Z",
+  "id": "7GNOY40oPtuxe0m3",
+  "name": "Time_Flipped_YT_Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"scenes\": [\n    {\n      \"scene_number\": 1,\n      \"narration\": \"Your text here\"\n    }\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -2464,
+        576
+      ],
+      "id": "6996018f-4729-4302-a279-f72c4a5cbd07",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1664,
+        384
+      ],
+      "id": "c427d4ce-073f-449d-9dda-78fe5923a4ec",
+      "name": "Loop Over Items",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.scenes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2336,
+        384
+      ],
+      "id": "dba9d662-b32e-4baa-9a41-0724089ba022",
+      "name": "Create Table"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88192cdb-0dec-4960-9a36-8d19874f1a97",
+              "name": "scenes",
+              "value": "={{ $json.scene_number }}",
+              "type": "string"
+            },
+            {
+              "id": "90cfd980-85b9-4f52-af26-1ab94f8a8ec1",
+              "name": "narrations",
+              "value": "={{ $json.narration }}",
+              "type": "string"
+            },
+            {
+              "id": "a3059d17-ffa7-42ea-9a86-b2973a705361",
+              "name": "nca",
+              "value": "http://173.212.233.128:8081",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1456,
+        496
+      ],
+      "id": "75b833d6-dbf5-4721-9e03-9fa8895eeeb7",
+      "name": "Rename"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.together.xyz/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell-Free"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "steps",
+              "value": "={{ 4 }}"
+            },
+            {
+              "name": "n",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "width",
+              "value": "={{ 1280 }}"
+            },
+            {
+              "name": "height",
+              "value": "={{ 720 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        48,
+        480
+      ],
+      "id": "3759284c-745c-40a3-b02d-8ccad21a4ed4",
+      "name": "Free Images",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "xNZtY56kIowFixlg",
+          "name": "together Ai"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "nca-toolkit",
+        "fileName": "=Raw%2F{{ $json.scenes }}.mp3",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        496
+      ],
+      "id": "6a07eb2f-56ec-4547-bcf1-03b8a8f9d303",
+      "name": "Audio upload to MiniO1",
+      "retryOnFail": false,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "45f0b865-2cd7-4dc7-b329-631446d94f43",
+              "name": "=audio",
+              "value": "={{ \n  $('Rename').item.json.nca.trim().substring(0, $('Rename').item.json.nca.trim().lastIndexOf(':')) + \n  \":9000/nca-toolkit/\" + \n  encodeURIComponent(\"Raw/\" + $('Generate Voices from Kokoro TTS').item.json.scenes.trim()) + \n  \".mp3\"\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        496
+      ],
+      "id": "8270a0c9-e068-4d3d-9382-fbe2885319d6",
+      "name": "Get Audio Link"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/media/metadata",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "media_url",
+              "value": "={{ $json.audio }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -592,
+        496
+      ],
+      "id": "bfae4a34-6328-4544-941e-3044cc4ee860",
+      "name": "metadata (Audio)",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/image/convert/video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.data[0].url }}\",\n  \"length\":  {{ $('metadata (Audio)').item.json.response.duration }},\n  \"frame_rate\": 24,\n  \"zoom_speed\": 3,\n  \"id\": \"request-123\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        464
+      ],
+      "id": "95268430-f968-4cc2-8bfa-f30659d88327",
+      "name": "Image to Video",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/ffmpeg/compose",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"merge-video-voiceover-youtube\",\n  \"inputs\": [\n    {\n      \"file_url\": \"{{ $json.response }}\"\n    },\n    {\n      \"file_url\": \"{{ $('Get Audio Link').item.json.audio }}\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:a]volume=2.0[boosted_audio]\"\n    },\n    {\n      \"filter\": \"[0:v]scale=iw*min(1920/iw\\\\,1080/ih):ih*min(1920/iw\\\\,1080/ih),pad=1920:1080:(1920-iw*min(1920/iw\\\\,1080/ih))/2:(1080-ih*min(1920/iw\\\\,1080/ih))/2[scaled_video]\"\n    },\n    {\n      \"filter\": \"[scaled_video][boosted_audio]concat=n=1:v=1:a=1[outv][outa]\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        {\n          \"option\": \"-map\",\n          \"argument\": \"[outv]\"\n        },\n        {\n          \"option\": \"-map\",\n          \"argument\": \"[outa]\"\n        },\n        {\n          \"option\": \"-c:v\",\n          \"argument\": \"libx264\"\n        },\n        {\n          \"option\": \"-c:a\",\n          \"argument\": \"aac\"\n        }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"duration\": true,\n    \"filesize\": true\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        448
+      ],
+      "id": "4b41369f-f86b-4654-9490-05eb07a0eaf6",
+      "name": "Merge Audio and Video",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "response[0].file_url",
+              "renameField": true,
+              "outputFieldName": "videos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        80
+      ],
+      "id": "cedf5576-3936-4711-8164-563dc5605a8a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get array of URLs from previous node\nconst urls = items[0].json.videos;\n\n// Transform each URL into { video_url: \"<url>\" }\nconst wrapped = urls.map(url => ({ video_url: url }));\n\n// Return in the correct API format\nreturn [\n  {\n    json: {\n      video_urls: wrapped,\n      id: \"concat-job-001\"   // you can make this dynamic if you want\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1296,
+        48
+      ],
+      "id": "7cfba98b-0406-46b9-9719-feb070938b94",
+      "name": "Create Array"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://173.212.233.128:8081/v1/video/concatenate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1088,
+        80
+      ],
+      "id": "202b3c08-b96b-448a-8222-5ea331545503",
+      "name": "Video Concatinate",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081//v1/ffmpeg/compose",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": [\n    {\n      \"file_url\": \"{{ $json.response }}\"\n    },\n    {\n      \"file_url\": \"http://173.212.233.128:9000/time-flipped/Logo%2Flogo-time%20Flipped.png\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:v]scale=250:250[logo];[0:v][logo]overlay=W-w-50:50\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        { \"option\": \"-f\", \"argument\": \"mp4\" },\n        { \"option\": \"-c:v\", \"argument\": \"libx264\" }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"thumbnail\": false,\n    \"filesize\": true,\n    \"duration\": true,\n    \"bitrate\": true\n  },\n  \"id\": \"overlay_logo_top\"\n}\n",
+        "options": {
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -768,
+        80
+      ],
+      "id": "04248319-b0d1-4c84-9d0b-07027c8a47f7",
+      "name": "Logo",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/ffmpeg/compose",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=  {\n    \"id\": \"add-bg-music-youtube-landscape\",\n    \"inputs\": [\n      {\n        \"file_url\": \"{{ $('Logo').item.json.response[0].file_url }}\"\n      },\n      {\n        \"file_url\": \"http://173.212.233.128:9000/time-flipped/music%2FStillness%20-%20Futuremono.mp3\"\n      }\n    ],\n    \"filters\": [\n      {\n        \"filter\": \"[0:v]scale=iw*min(1920/iw\\\\,1080/ih):ih*min(1920/iw\\\\,1080/ih),pad=1920:1080:(1920-iw*min(1920/iw\\\\,1080/ih))/2:(1080-ih*min(1920/iw\\\\,1080/ih))/2[v]\"\n      },\n      {\n        \"filter\": \"[1:a]aloop=loop=-1:size=2e+09,volume=0.2[bgm]\"\n      },\n      {\n        \"filter\": \"[0:a]volume=2.0[voice]\"\n      },\n      {\n        \"filter\": \"[voice][bgm]amix=inputs=2:duration=first:dropout_transition=3[a]\"\n      }\n    ],\n    \"outputs\": [\n      {\n        \"options\": [\n          { \"option\": \"-map\", \"argument\": \"[v]\" },\n          { \"option\": \"-map\", \"argument\": \"[a]\" },\n          { \"option\": \"-c:v\", \"argument\": \"libx264\" },\n          { \"option\": \"-c:a\", \"argument\": \"aac\" },\n          { \"option\": \"-shortest\" },\n          { \"option\": \"-f\", \"argument\": \"mp4\" }\n        ]\n      }\n    ],\n    \"metadata\": {\n      \"duration\": true,\n      \"filesize\": true,\n      \"bitrate\": true\n    }\n  }",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        80
+      ],
+      "id": "030a0c75-28b2-4ad7-b119-d233e30c7b10",
+      "name": "Add Background Music",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an amazing image prompt generator",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an Image Prompt Generator AI agent.  \n\nYour role is to convert narration text into highly detailed, imaginative prompts for Flux Schnell (Stable Diffusion-like) image generation.  \n\n### Instructions:\n\n1. **Context Awareness**  \n   - You are given:  \n     - The **narration text** (the specific line to visualize).  \n     - The **complete part script** (surrounding context).  \n   - Use the **narration as the core focus**, but also adapt the visual to stay consistent with the overall theme and mood of the full part script.  \n   - Example:  \n     - Narration: \"The blind spot in the human eye.\"  \n     - Full script theme: vision, perception, science.  \n     - Image → surreal close-up of a human eye with a glowing void, realistic but slightly abstract to match scientific + philosophical tone.  \n\n2. **Dynamic Adaptation**  \n   - Do NOT use the same style for every narration.  \n   - Choose **style, camera mode, and imagery** based on narration + script theme.  \n   - Examples:  \n     - Cosmos, stars, time → cosmic, surreal, sci-fi cinematic.  \n     - Nature, rain, forests → natural, tranquil, atmospheric photography.  \n     - Human emotions, philosophy → symbolic, conceptual art.  \n     - Scientific, factual → realistic, diagrammatic, documentary style.  \n\n3. **Image Prompt Elements**  \n   Every generated prompt must contain:  \n   - **Camera angle** → wide shot, close-up, aerial, cinematic, macro, etc.  \n   - **Environment details** → nature, galaxies, cities, laboratory, abstract, etc.  \n   - **Lighting** → dramatic cosmic glow, soft daylight, neon futuristic, golden hour, etc.  \n   - **Style** → cinematic, hyper-realistic 8K, surreal digital art, abstract sketch, documentary photography, etc.  \n   - **Colors** → vivid galaxy tones, warm earth tones, cold futuristic blues, monochrome, etc.  \n\n4. **Interpretive Visualization**  \n   - Never include the narration text itself.  \n   - Visualize the essence of the narration.  \n   - Use metaphorical or literal imagery depending on theme.  \n   - Example transformations:  \n     - Narration: \"The blind spot in the human eye.\"  \n       → Prompt: \"A surreal close-up of a human eye dissolving into a swirling black void, glowing veins fading into darkness, cinematic macro shot, dramatic high-contrast lighting, ultra-realistic 8K style.\"  \n     - Narration: \"The first drops of rain touched the earth.\"  \n       → Prompt: \"Cinematic close-up of raindrops hitting dry soil, dust rising in golden sunlight, ultra-detailed 8K natural photography.\"  \n\n5. **Output Format**  \n   - Return only the **image prompt** as plain text.  \n   - No JSON, no explanation, no extra formatting.  \n\n---\n\n### Inputs:\n- Narration: {{ $('Rename').item.json.narrations }}  \n- Video Script: {{ $('Script Writer').item.json.output }}\n\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        688,
+        256
+      ],
+      "id": "708f1f9b-7b0e-4a87-9467-11a6d35f5314",
+      "name": "Images Prompts",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8880/v1/audio/speech",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "kokoro"
+            },
+            {
+              "name": "input",
+              "value": "={{ $json.narrations }}"
+            },
+            {
+              "name": "voice",
+              "value": "af_bella"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        496
+      ],
+      "id": "0dab5135-33ee-4b06-8db3-a7ca81057116",
+      "name": "Generate Voices from Kokoro TTS",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2816,
+        912
+      ],
+      "id": "ebeb75a0-f46a-4f48-9dc1-4c6a19b99f13",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrive scripts sample for refernce ",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "time-flipped-scripts",
+          "mode": "list",
+          "cachedResultName": "time-flipped-scripts"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -2912,
+        752
+      ],
+      "id": "f3e2fe88-5b2c-4ba1-b92d-5c19a68a29c9",
+      "name": "Time-Flipped-Scripts",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Tzo8ULCdQIZZdu6l",
+          "name": "Time_Flipped"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are expert in creating scenes and narrations.\nhere is the script: {{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an Expert Scene Creator AI agent.  \n\nYour role is to take a video script and break it into short narration scenes for TTS with natural pacing.  \n\n### Instructions:\n\n1. **Scene Splitting**  \n   - Break the script into meaningful narration units.  \n   - Each scene should be {{ $('On form submission').item.json['Length of Each scene required'] }} of narration. \n   - If a sentence is long, split naturally while keeping meaning intact.  \n   - Avoid creating scenes shorter than 10 seconds unless absolutely necessary.  \n\n2. **Text Cleaning Rules**  \n   - Do NOT rewrite, paraphrase, or invent text.  \n   - Use the **exact same words** from the script.  \n   - Remove formatting like headings (**Hook**, **Narration**, **Outro**) and unnecessary symbols.  \n   - Replace any **multiple full stops (`..` or `...`)** with a clean single Space.  \n   - Remove any emotional or stage directions such as `[pause]`, `[silence]`, `[ohh]`, `[laugh]`.  \n   - Final output should contain only **clean text narration** without even two or more consecutive dots.  \n\n3. **Punctuation for TTS**  \n   - Ensure sentences have proper commas, ellipses, or dashes to guide rhythm.  \n   - Use ellipses `...` for suspense or curiosity.  \n   - Use exclamation marks `!` for excitement or surprise.  \n   - Use question marks `?` for reflective or rhetorical questions.  \n\n4. **Output Format**  \n   - Must be valid JSON.  \n   - Each scene contains:  \n     - `scene_number`: Sequential starting from 1.  \n     - `narration`: Exact cleaned text for that scene.  \n\n### Example:  \nIf the script is:  \n\"Hey explorers!! What if there were not one.. but two Earths?? Two planets—almost identical—both capable of supporting life. [pause][pause]\"  \n\nThen the output should be:  \n\n```json\n{\n  \"scenes\": [\n    {\n      \"scene_number\": 1,\n      \"narration\": \"Hey explorers!\"\n    },\n    {\n      \"scene_number\": 2,\n      \"narration\": \"What if there were not one... but two Earths?\"\n    },\n    {\n      \"scene_number\": 3,\n      \"narration\": \"Two planets—almost identical—both capable of supporting life!\"\n    }\n  ]\n}\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -2656,
+        384
+      ],
+      "id": "cef5bcb3-03eb-4a49-b022-4d58cf91d426",
+      "name": "Scenes Creation"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2688,
+        576
+      ],
+      "id": "74a87cf8-9fc8-4c8c-a421-d8f5c69c5ef5",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Time Flipped Video Creator",
+        "formDescription": "describe following informations to get started with the video",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Main Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Video Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Next Part Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Part No",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Length of Video Required",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Length of Each scene required"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -3344,
+        384
+      ],
+      "id": "c78dd388-45b5-4324-a296-c9003ad071db",
+      "name": "On form submission",
+      "webhookId": "25696be5-3d24-4c07-9056-dfdbb695e1e8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=main Title: {{ $('On form submission').item.json['Main Title'] }}\nVideo Title:{{ $('On form submission').item.json['Video Title'] }}\nPart No:{{ $('On form submission').item.json['Part No'] }}\nNext Part Title: {{ $('On form submission').item.json['Next Part Title'] }}",
+        "options": {
+          "systemMessage": "=You are an Expert AI scriptwriter agent for the YouTube channel **“Time Flipped”**.  \nYour job is to create **engaging, motivational, and informative video scripts**.  \nOther agents will handle voiceover, visuals, and editing.  \nYou only focus on **scriptwriting**.  \n\n---\n\n### CHANNEL CONTEXT:\n- Channel Name: **Time Flipped**  \n- Category: Sharing knowledge, facts, and latest research on **astronomy, time, nature, existence, and other thought-provoking topics**.  \n- Video Duration: {{ $('On form submission').item.json['Length of Video Required'] }}, depending on content depth.  \n\n---\n\n### INPUTS YOU WILL RECEIVE:\n1. **Main Title (Playlist Title):** The overarching theme of the video series.  \n   Example: \"The Mysteries of Time\"  \n\n2. **Video Title (Sub-Part Title):** The focus of this specific part of the series.  \n   Example: \"Why Time Flows Forward\"  \n\n3. **Part Number:** The sequence of this video within the series.  \n   Example: \"Part 2\"  \n\n4. **Next Part Title:** The title of the next part in the series.  \n   - If a title is provided → End this script by building **curiosity** for the next video.  \n   - If \"NO\" → This is the **last part** of the series. Fully **conclude the entire series** with clarity and depth.  \n\n---\n\n### TOOLS:\n- **Time-Flipped-Scripts:** Use this tool to retrieve style references from Pinecone DB.  \n  - These contain **sample transcriptions of the channel Life_Laps**.  \n  - Do NOT copy content. Use only their **style, flow, engagement techniques, and narration tone**.  \n\n---\n\n### SCRIPT REQUIREMENTS:\n- **Length:** 2–4 minutes (approx. 120–300 words).  \n- **Tone & Style:**  \n  - Engaging, curious, thought-provoking, and sometimes mysterious.  \n  - Balance **scientific knowledge + motivational reflection + storytelling**.  \n  - Make the audience feel like they are on a **journey of discovery**.\n  - \n\n- **Content Type:**  \n  - Explain complex ideas in **simple, relatable language**.  \n  - Use **facts, figures, analogies, and research findings** where relevant.  \n  - Relate concepts to **every type of person** (students, thinkers, dreamers, professionals).  \n  - Explore topics from different angles:  \n    - What it is  \n    - Why it matters  \n    - How it works / the process  \n    - History / latest research  \n    - Effects & implications  \n    - Comparisons & relatability  \n    - Future possibilities / unknowns  \n\n- **Interaction Hooks:**  \n  - Ask viewers to **comment their opinions** on deep or debatable points. Example:  \n    - “What do you think? Could time really exist without space? Comment your thoughts below.”  \n  - Naturally encourage:  \n    - “Subscribe, like this video, and press the bell icon to keep exploring more mysteries with us.”  \n\n---\n\n### STRUCTURE:\n1. **Hook (20–30 sec):** A captivating opening line that sparks curiosity.  \n2. **Narration Body:** Deep-dive into the topic with smooth flow.  \n   - Use storytelling, knowledge, and reflection.  \n   - Insert interaction cues (ask for comments).  \n3. **Motivational Layer:** Relate scientific mysteries to life, growth, or human existence.  \n4. **Engagement Cues:** Remind viewers naturally to like, subscribe, and press the bell icon.  \n5. **Conclusion:**  \n   - If there is a **Next Part Title** → End with curiosity and a bridge to the next video.  \n   - If **Next Part = NO** → Conclude the whole series with finality and inspiration.  \n\n---\n\n### OUTPUT FORMAT:\nDeliver the script in clean sections with clear labels:  \n- **Hook**  \n- **Narration / Voiceover** (divided into smooth paragraphs/scenes)  \n- **Engagement Cue (CTA)**  \n- **Curiosity Bridge / Outro**  \n\n---\n\n### REMINDER:\n- Use **Time-Flipped-Scripts tool** to emulate the **Life_Laps style**, but keep all content original.  \n- Every script must be **unique**, even within the same series.  \n- Blend **knowledge + wonder + inspiration + interaction**.  \n- Always encourage likes, comments, subscriptions, and bell icon clicks naturally.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2976,
+        384
+      ],
+      "id": "8f34ba24-e929-4d74-88a4-32f7b3d7111a",
+      "name": "Script Writer"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "bucketName": "time-flipped",
+        "folderName": "videos",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -2720,
+        48
+      ],
+      "id": "ba1eb8ac-5fe7-4955-976b-33b6ef13b4e8",
+      "name": "Create a folder",
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -736,
+        1072
+      ],
+      "id": "676e4768-943b-4acb-9604-e725b1654d43",
+      "name": "OpenAI Chat Model1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        768
+      ],
+      "id": "9c1cba18-e5f3-4f06-acaf-d2cf8d9de52a",
+      "name": "Wait",
+      "webhookId": "686f0839-9f4f-4d31-9a5c-5b7f76800da1"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -912,
+        752
+      ],
+      "id": "fede6fc5-bb7c-4ced-b428-8b0af51a053e",
+      "name": "Wait2",
+      "webhookId": "ded5b1da-29c4-413f-b80e-5cd1b183bb30"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        80
+      ],
+      "id": "20e1b611-cc34-4a06-8ffa-570eb585eab1",
+      "name": "Wait1",
+      "webhookId": "f8f0562d-3a50-4ad6-a06c-923d7b9432c3"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        80
+      ],
+      "id": "b45f9cbc-31b6-4d80-a466-3672ad78afcb",
+      "name": "Wait8",
+      "webhookId": "81b85230-6759-4af4-a1c8-fec8f22d3480"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/video/caption",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_url\": \"{{ $('Add Background Music').item.json.response[0].file_url }}\",\n  \"settings\": {\n    \"style\": \"highlight\",\n    \"line_color\": \"#FFFFFF\",\n    \"word_color\": \"#FFFF00\",\n    \"outline_color\": \"#000000\",\n    \"all_caps\": false,\n    \"max_words_per_line\": 4,\n    \"position\": \"bottom_center\",\n    \"alignment\": \"center\",\n    \"font_family\": \"DejaVu Sans\",\n    \"font_size\": 48,\n    \"bold\": true,\n    \"italic\": true,\n    \"underline\": false,\n    \"strikeout\": false,\n    \"outline_width\": 2,\n    \"spacing\": 2,\n    \"angle\": 0,\n    \"shadow_offset\": 2\n  },\n  \"replace\": [\n    { \"find\": \"um\", \"replace\": \"\" },\n    { \"find\": \"...\", \"replace\": \"\" },\n    { \"find\": \"like\", \"replace\": \"\" }\n  ],\n  \"id\": \"job-caption-001\",\n  \"language\": \"en\"\n}",
+        "options": {
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        80
+      ],
+      "id": "9c4fa3f9-66ce-4ad8-b495-4a4366f98f61",
+      "name": "add Captions",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "zubairyounus99@gmail.com",
+        "subject": "={{ $('On form submission').item.json['Part No'] }}-{{ $('On form submission').item.json['Video Title'] }}-Generation Completed",
+        "emailType": "text",
+        "message": "=Hi Zubair,\n\nyour video titled \"{{ $('On form submission').item.json['Main Title'] }}\" for which \"{{ $('On form submission').item.json['Part No'] }}\" of  the video title \"{{ $('On form submission').item.json['Video Title'] }}\" is completed.\n\n\nhere is the link of Complete video in all respects:\n{{ $json.response }}\n\nother Links are also below:\n\nwithout Captions:\n{{ $('Add Background Music').item.json.response[0].file_url }}\n\nwithout Logo:\n{{ $('Logo').item.json.response[0].file_url }}\n\nhere is the Raw Video:\n{{ $('Video Concatinate').item.json.response }}\n\nthnaks,\nZubair",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        544,
+        16
+      ],
+      "id": "2dfb0881-5f66-4ed9-94e9-b4f7ccae61e1",
+      "name": "Send Completion Mesage.",
+      "webhookId": "b66298ad-d879-40e4-8ed0-847b61216bc1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('On form submission').item.json['Main Title'] }}",
+        "tableName": "Time_Flipped_Automatio_Chat",
+        "contextWindowLength": 200
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2928,
+        576
+      ],
+      "id": "964bd8fa-600b-4227-9657-6972d08a3441",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an amazing image prompt generator and you are given \nNarration:  {{ $('Rename').item.json.narrations }}\nVideo Script: {{ $('Script Writer').item.json.output }}",
+        "options": {
+          "systemMessage": "=You are an Expert Image Prompt Generator AI agent.  \n\nYour role is to convert narration text into highly detailed, imaginative prompts for Flux Schnell (Stable Diffusion-like) image generation.  \n\n### Instructions:\n\n1. **Context Awareness**  \n   - You are given:  \n     - The **narration text** (the specific line to visualize).  \n     - The **complete part script** (surrounding context).  \n     - Use the **narration as the core focus**, but also adapt the visual to stay consistent with the overall theme and mood of the full part script.  \n    -The chat memory of you that which types of prompt you generated for previous narration.use this memory to link previous execution to ensure consistent visuals in a flow which matches the previous context of last prompt generated and use the script to ensure it also aligns with next parts generation.\n   - Example:  \n     - Narration: \"The blind spot in the human eye.\"  \n     - Full script theme: vision, perception, science.  \n     - Image → surreal close-up of a human eye with a glowing void, realistic but slightly abstract to match scientific + philosophical tone.  \n\n2. **Dynamic Adaptation**  \n   - Do NOT use the same style for every narration.  \n   - Choose **style, camera mode, and imagery** based on narration + script theme.  \n   - Examples:  \n     - Cosmos, stars, time → cosmic, surreal, sci-fi cinematic.  \n     - Nature, rain, forests → natural, tranquil, atmospheric photography.  \n     - Human emotions, philosophy → symbolic, conceptual art.  \n     - Scientific, factual → realistic, diagrammatic, documentary style.  \n\n3. **Image Prompt Elements**  \n   Every generated prompt must contain:  \n   - **Camera angle** → wide shot, close-up, aerial, cinematic, macro, etc.  \n   - **Environment details** → nature, galaxies, cities, laboratory, abstract, etc.  \n   - **Lighting** → dramatic cosmic glow, soft daylight, neon futuristic, golden hour, etc.  \n   - **Style** → cinematic, hyper-realistic 8K, surreal digital art, abstract sketch, documentary photography, etc.  \n   - **Colors** → vivid galaxy tones, warm earth tones, cold futuristic blues, monochrome, etc.  \n\n4. **Interpretive Visualization**  \n   - Never include the narration text itself.  \n   - Visualize the essence of the narration.  \n   - Use metaphorical or literal imagery depending on theme.  \n   - Example transformations:  \n     - Narration: \"The blind spot in the human eye.\"  \n       → Prompt: \"A surreal close-up of a human eye dissolving into a swirling black void, glowing veins fading into darkness, cinematic macro shot, dramatic high-contrast lighting, ultra-realistic 8K style.\"  \n     - Narration: \"The first drops of rain touched the earth.\"  \n       → Prompt: \"Cinematic close-up of raindrops hitting dry soil, dust rising in golden sunlight, ultra-detailed 8K natural photography.\"  \n\n5. **Output Format**  \n   - Return only the **image prompt** as plain text.  \n   - No JSON, no explanation, no extra formatting.  \n\n---\n\n### Inputs:\n- Narration: {{ $('Rename').item.json.narrations }}  \n- Video Script: \n{{ $('Script Writer').item.json.output }}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        480
+      ],
+      "id": "698dcfb8-c11c-4e40-9493-aac8431a911c",
+      "name": "Image Prompt generator"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('On form submission').item.json['Main Title'] }}",
+        "tableName": "Time_Flipped_Automatio_Chat",
+        "contextWindowLength": 2000
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        688
+      ],
+      "id": "39f43069-324c-4fac-b821-b0590ef23efd",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -592,
+        80
+      ],
+      "id": "6536320f-d4a6-45f5-9331-90b1dcc27532",
+      "name": "Wait3",
+      "webhookId": "43b7b276-8f74-4f1d-8a48-5cb89f6769fd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -3072,
+        608
+      ],
+      "id": "3e881881-5852-4b1f-ae9a-8a34c937c459",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        784
+      ],
+      "id": "c4a6425e-7fc2-4cde-a2a4-247d22848920",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k1wU8v2Duj2lDC3p",
+          "name": "Gemini-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        736
+      ],
+      "id": "afd553e4-4348-4f7c-a400-91f6898402b7",
+      "name": "Wait4",
+      "webhookId": "810f8f63-3794-410a-8867-8c0ef7f136ad",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88192cdb-0dec-4960-9a36-8d19874f1a97",
+              "name": "scene_number",
+              "value": "={{ $('Loop Over Items').item.json.scene_number }}",
+              "type": "string"
+            },
+            {
+              "id": "90cfd980-85b9-4f52-af26-1ab94f8a8ec1",
+              "name": "narration",
+              "value": "={{ $('Loop Over Items').item.json.narration }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        752
+      ],
+      "id": "3e4d9446-177e-4fd3-bf92-32ece55647da",
+      "name": "Rename after error"
+    }
+  ],
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Table": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename": {
+      "main": [
+        [
+          {
+            "node": "Generate Voices from Kokoro TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio upload to MiniO1": {
+      "main": [
+        [
+          {
+            "node": "Get Audio Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio Link": {
+      "main": [
+        [
+          {
+            "node": "metadata (Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "metadata (Audio)": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Free Images": {
+      "main": [
+        [
+          {
+            "node": "Image to Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Image to Video": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio and Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Audio and Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Create Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array": {
+      "main": [
+        [
+          {
+            "node": "Video Concatinate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Concatinate": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logo": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Background Music": {
+      "main": [
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Voices from Kokoro TTS": {
+      "main": [
+        [
+          {
+            "node": "Audio upload to MiniO1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Time-Flipped-Scripts",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time-Flipped-Scripts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scenes Creation": {
+      "main": [
+        [
+          {
+            "node": "Create Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script Writer": {
+      "main": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Rename after error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Logo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "add Captions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add Captions": {
+      "main": [
+        [
+          {
+            "node": "Send Completion Mesage.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt generator": {
+      "main": [
+        [
+          {
+            "node": "Free Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Add Background Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        []
+      ]
+    },
+    "Rename after error": {
+      "main": [
+        [
+          {
+            "node": "Rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Create Array": [
+      {
+        "json": {
+          "video_urls": [
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/ab882e77-66e1-4c92-92e3-d7fdcb73410c_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/61c847b4-83b8-43fe-b6c5-1bccc8c02203_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/3f67332b-15a7-4011-ba77-9daf7120145c_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/052e48d1-9c41-42dd-9501-86ea06894c41_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/57fc128a-361a-4034-97b7-f33bcb9a7e48_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/9ff26ab3-9f33-4a80-a8f3-8dd149bf25e1_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/a4d101da-8383-418d-af02-7fe72c6ad3d1_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/ba50304b-dd0c-4f5d-aee6-8e4069021eb8_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/54daf261-9187-45b0-a037-e64317105fa0_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/ef30eb1c-0a17-4294-b1ec-a4ed25e71175_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/b1978ad2-69d2-48e0-b73d-073028450eaf_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/1346a976-f92a-45f8-aca0-57f7bcdc2821_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/f0419b11-4553-462d-b904-0abf06ebf226_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/61ada980-987e-424f-9ac2-f6ed43a01b83_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/95c5fe62-903b-4ed5-b2f6-5405d22a97e0_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/efd0b582-2795-49ce-a9eb-a0b5fddf6ab8_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/32809281-6086-4407-910c-bd957a70c47e_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/52483776-4bb3-4261-8ebb-63e39c42b378_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/690d791c-40d0-4007-a591-59a82b64db0b_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/1ed3a06e-5742-47e3-bd7e-33864f193213_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/485efc64-65f2-428e-b157-7c226153783a_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/2bc22611-d9cb-4fa2-ad88-3babbc98d8e4_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/bf0315c8-dfac-4e6d-957d-23b850a8c60a_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/c6b41150-bd6f-40b2-bbd1-0eff4f65439e_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/daadb0d3-9c80-43b0-b3ea-8d56b849431f_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/037567cc-4d79-4e20-9b91-b034cbc44b19_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/523325b8-3279-4620-ad23-bcb64726247b_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/4d5aff9b-6fca-4a42-8da1-bd1b68aad8a0_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/ea63cf88-a004-4d4f-8fba-c548ed01d6bc_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/7c469df3-0714-461a-a234-7af06b6daa52_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/d6b33ca4-0a90-4c8f-91ae-ead19900c059_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/11aa6c31-700a-41e4-8f26-0033688c43b2_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/6d8d823d-494f-4a9e-8189-c38f11c4abf9_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/315f56d8-ecb5-49f7-a162-c10f4c4f5b1a_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/bbe41a57-3b0d-44ac-942f-dec62f848626_output_0.mp4"
+            },
+            {
+              "video_url": "http://173.212.233.128:9000/nca-toolkit/b8e44364-890a-46d8-a84d-92c660e99d7b_output_0.mp4"
+            }
+          ],
+          "id": "concat-job-001"
+        }
+      }
+    ],
+    "Aggregate": [
+      {
+        "json": {
+          "videos": [
+            "http://173.212.233.128:9000/nca-toolkit/ab882e77-66e1-4c92-92e3-d7fdcb73410c_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/61c847b4-83b8-43fe-b6c5-1bccc8c02203_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/3f67332b-15a7-4011-ba77-9daf7120145c_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/052e48d1-9c41-42dd-9501-86ea06894c41_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/57fc128a-361a-4034-97b7-f33bcb9a7e48_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/9ff26ab3-9f33-4a80-a8f3-8dd149bf25e1_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/a4d101da-8383-418d-af02-7fe72c6ad3d1_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/ba50304b-dd0c-4f5d-aee6-8e4069021eb8_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/54daf261-9187-45b0-a037-e64317105fa0_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/ef30eb1c-0a17-4294-b1ec-a4ed25e71175_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/b1978ad2-69d2-48e0-b73d-073028450eaf_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/1346a976-f92a-45f8-aca0-57f7bcdc2821_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/f0419b11-4553-462d-b904-0abf06ebf226_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/61ada980-987e-424f-9ac2-f6ed43a01b83_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/95c5fe62-903b-4ed5-b2f6-5405d22a97e0_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/efd0b582-2795-49ce-a9eb-a0b5fddf6ab8_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/32809281-6086-4407-910c-bd957a70c47e_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/52483776-4bb3-4261-8ebb-63e39c42b378_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/690d791c-40d0-4007-a591-59a82b64db0b_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/1ed3a06e-5742-47e3-bd7e-33864f193213_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/485efc64-65f2-428e-b157-7c226153783a_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/2bc22611-d9cb-4fa2-ad88-3babbc98d8e4_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/bf0315c8-dfac-4e6d-957d-23b850a8c60a_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/c6b41150-bd6f-40b2-bbd1-0eff4f65439e_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/daadb0d3-9c80-43b0-b3ea-8d56b849431f_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/037567cc-4d79-4e20-9b91-b034cbc44b19_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/523325b8-3279-4620-ad23-bcb64726247b_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/4d5aff9b-6fca-4a42-8da1-bd1b68aad8a0_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/ea63cf88-a004-4d4f-8fba-c548ed01d6bc_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/7c469df3-0714-461a-a234-7af06b6daa52_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/d6b33ca4-0a90-4c8f-91ae-ead19900c059_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/11aa6c31-700a-41e4-8f26-0033688c43b2_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/6d8d823d-494f-4a9e-8189-c38f11c4abf9_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/315f56d8-ecb5-49f7-a162-c10f4c4f5b1a_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/bbe41a57-3b0d-44ac-942f-dec62f848626_output_0.mp4",
+            "http://173.212.233.128:9000/nca-toolkit/b8e44364-890a-46d8-a84d-92c660e99d7b_output_0.mp4"
+          ]
+        }
+      }
+    ],
+    "Wait": [
+      {
+        "json": {
+          "build_number": 200,
+          "code": 200,
+          "id": "merge-video-voiceover-youtube",
+          "job_id": "ab882e77-66e1-4c92-92e3-d7fdcb73410c",
+          "message": "success",
+          "pid": 12,
+          "queue_id": 140312710573840,
+          "queue_length": 0,
+          "queue_time": 0,
+          "response": [
+            {
+              "duration": 5.5,
+              "file_url": "http://173.212.233.128:9000/nca-toolkit/ab882e77-66e1-4c92-92e3-d7fdcb73410c_output_0.mp4",
+              "filesize": 816221
+            }
+          ],
+          "run_time": 4.799,
+          "total_time": 4.799
+        }
+      }
+    ]
+  },
+  "versionId": "c0d8b83e-ad1c-4c8f-8bb1-a1448ba216ee",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-08T06:05:33.851Z",
+      "updatedAt": "2025-09-08T06:05:33.851Z",
+      "role": "workflow:owner",
+      "workflowId": "7GNOY40oPtuxe0m3",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": [
+    {
+      "createdAt": "2025-09-08T06:06:20.811Z",
+      "updatedAt": "2025-09-08T06:06:20.811Z",
+      "id": "RNWde51of0nnQzPD",
+      "name": "Video Automation"
+    }
+  ]
+}
