@@ -1,0 +1,1000 @@
+{
+  "createdAt": "2025-09-10T17:30:10.064Z",
+  "updatedAt": "2025-09-11T19:55:03.715Z",
+  "id": "KblZaWgyX2Hk0PLt",
+  "name": "Thumbnail creation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Job Status",
+              "lookupValue": "Completed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -128,
+        -96
+      ],
+      "id": "ae0fa64f-3734-4eec-93fc-cf50ead77f8a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "807c739f-b4b7-41cb-92bf-7e8271e970ac",
+              "leftValue": "={{ $json['Thumbnail Link'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7505d681-ea99-40b4-8aa7-d648e561cf5a",
+              "leftValue": "={{ $json['Final Video Link'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        -80
+      ],
+      "id": "be25f030-3638-48c3-8010-70e821c14ca7",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -176
+      ],
+      "id": "1721c392-2693-4b5d-be4b-50c133e63aa5",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.together.xyz/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell-Free"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output.prompt }}"
+            },
+            {
+              "name": "steps",
+              "value": "={{ 4 }}"
+            },
+            {
+              "name": "n",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "width",
+              "value": "={{ 1280 }}"
+            },
+            {
+              "name": "height",
+              "value": "={{ 720 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        -64
+      ],
+      "id": "a2866ff1-12fc-4b95-84d5-54e1642d57b8",
+      "name": "Free Images",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "xNZtY56kIowFixlg",
+          "name": "together Ai"
+        },
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Series Title: {{ $('Limit').item.json['Series Title'] }}\nVideo Title: {{ $('Limit').item.json['Video Title'] }}\nPart No: {{ $('Limit').item.json['Part No.'] }}\n\nPlatform: time-Flipped",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an **Expert Thumbnail & Description Generator AI Agent**.  \n\nYour job is to create two outputs for every YouTube video:  \n\n1. **Thumbnail Image Prompt** → A highly detailed cinematic prompt for an AI image generator (Flux Schnell, Stable Diffusion-like).  \n2. **Video Description** → A short, engaging YouTube video description (120–200 words) that explains the story, sparks curiosity, and encourages engagement.  \n\n---\n\n### CONTEXT INPUTS YOU WILL RECEIVE:\n- Title: {{ $('Limit').item.json['Video Title'] }}\n- Episode (Optional): {{ $('Limit').item.json['Part No.'] }}\n- Series Title:   {{ $('Limit').item.json['Series Title'] }}\n- Story: 'Postgres Chat Memory' attached as a tool (already generated by another AI agent from chat history in PostgreSQL memory)  \n\n---\n\n### THUMBNAIL PROMPT RULES:\n- **Background Scene:** Must visualize the story context and title essence.  \n- **Camera Angle:** Cinematic wide shot, dramatic close-up, or aerial view.  \n- **Lighting:** Neon glow, dramatic shadows, or cosmic flares — depending on theme.  \n- **Style:** Ultra-detailed, cinematic, sci-fi, futuristic digital art.  \n- **Colors:** Bold and contrasting (e.g., neon blues, fiery oranges, deep blacks).  \n\n---\n\n### VIDEO DESCRIPTION RULES:\n- Must be **engaging, simple, and curiosity-driven**.  \n- Length: **150–200 words**.  \n- Style: Thought-provoking, mysterious, reflective.  \n- Should connect the story to **real-life struggles, human curiosity, or future exploration**.  \n- End with a **CTA (call-to-action)**: encourage viewers to comment, like, subscribe.  \n\n---\n\n### OUTPUT FORMAT (STRICT JSON):\nReturn results ONLY in the following JSON structure:  \n\n{\n  \"prompt\": \"Cinematic thumbnail of a glowing time portal opening in a dark forest, wide-angle lens, neon blue and purple hues, cinematic lighting, ultra-detailed, with bold futuristic text overlay 'Time Flipped' in glowing white.\",\n  \"description\": \"Step into the unknown with this mind-bending exploration of time, choices, and hidden mysteries. In this video, we uncover fascinating theories about what happens when timelines collide and possibilities reshape our reality. Get ready for curiosity, emotion, and wonder as we dive deep into stories that make you question everything. Don’t forget to like, share, and subscribe for more journeys into the mysteries of life!\"\n}\n\n---\n\n### IMPORTANT REMINDERS:\n- Do NOT output explanations, markdown, or extra notes.  \n- Always follow the **Life_Laps inspired style** (mysterious, cinematic, knowledge + emotion).  \n- Keep **text overlay minimal** for thumbnails (only Title & Episode).  \n- Video description should balance **mystery + meaning + engagement**.  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        -176
+      ],
+      "id": "e1326d63-d933-4808-985f-bd7302432f21",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Time Flipped",
+        "tableName": "Time_Flipped_Automation_Chat",
+        "contextWindowLength": 500
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        80
+      ],
+      "id": "94ae8eb8-c69a-4dcf-9693-777b5f59a6e9",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        976,
+        32
+      ],
+      "id": "1d4a211b-329c-409e-8ebe-866a0272bce8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "04L4BIAqVzDlgCrO",
+          "name": "Gemini-4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Title": "={{ $('Limit').item.json['Video Title'] }}",
+            "Thumbnail Link": "={{ $json.data[0].url }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Flow Start",
+              "displayName": "Work Flow Start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Link",
+              "displayName": "Thumbnail Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        -288
+      ],
+      "id": "737d2884-a84b-46ff-a40f-7c7d2e520ba5",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -112
+      ],
+      "id": "7e1d4246-cdae-45c1-aae5-c1b1ccfedd34",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json['Part No.'] }} |{{ $json['Video Title'] }} | {{ $json['Series Title'] }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+          "mode": "list",
+          "cachedResultName": "Final Videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2672,
+        -528
+      ],
+      "id": "892c1c08-9293-4956-b821-b573ba3e6f88",
+      "name": "Upload file",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Limit').item.json['Final Video Link'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 1500000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        -432
+      ],
+      "id": "1f98f124-f9fd-49e3-91e2-85a6d0124a9c",
+      "name": "Download File",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json['Video Title'] }}",
+        "returnAll": true,
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -464
+      ],
+      "id": "c85b8c59-ef7f-4715-b005-c9de82128145",
+      "name": "Search files and folders",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8eb75842-7382-4ad9-825b-f072800d02a9",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "={{ $('Limit').item.json['Video Title'] }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        -464
+      ],
+      "id": "a5911644-6682-4417-866a-5d6c1f0f7753",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Limit').item.json['Video Title'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+          "mode": "list",
+          "cachedResultName": "Final Videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        656,
+        -208
+      ],
+      "id": "bc7940b1-0ace-4f88-96e1-983cc55b0600",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Thumbnail Prompt": "={{ $json.output.prompt }}",
+            "Video Title": "={{ $('Limit').item.json['Video Title'] }}",
+            "Description": "={{ $json.output.description }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Flow Start",
+              "displayName": "Work Flow Start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Prompt",
+              "displayName": "Thumbnail Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Link",
+              "displayName": "Thumbnail Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1536,
+        -448
+      ],
+      "id": "3bc63572-948c-4634-9e22-a7e6c6fe82c5",
+      "name": "Update Thumbnail Pic Link",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"prompt\": \"Cinematic thumbnail of a glowing time portal opening in a dark forest, wide-angle lens, neon blue and purple hues, cinematic lighting, ultra-detailed, with bold futuristic text overlay 'Time Flipped' in glowing white.\",\n  \"description\": \"Step into the unknown with this mind-bending exploration of time, choices, and hidden mysteries. In this video, we uncover fascinating theories about what happens when timelines collide and possibilities reshape our reality. Get ready for curiosity, emotion, and wonder as we dive deep into stories that make you question everything. Don’t forget to like, share, and subscribe for more journeys into the mysteries of life!\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        96
+      ],
+      "id": "43c288ad-6176-4b3d-a0ac-a945c5e133d2",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Free Images",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Thumbnail Pic Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Free Images": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "UUKqPWIjdYo6Togj"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f2558e0a-0285-42c8-bf68-e1b5c6ac5fe8",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-10T17:30:10.064Z",
+      "updatedAt": "2025-09-10T17:30:10.064Z",
+      "role": "workflow:owner",
+      "workflowId": "KblZaWgyX2Hk0PLt",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": [
+    {
+      "createdAt": "2025-09-08T06:06:20.811Z",
+      "updatedAt": "2025-09-08T06:06:20.811Z",
+      "id": "RNWde51of0nnQzPD",
+      "name": "Video Automation"
+    }
+  ]
+}
