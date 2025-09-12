@@ -1,0 +1,73 @@
+{
+  "createdAt": "2025-09-11T01:24:17.500Z",
+  "updatedAt": "2025-09-11T01:24:17.500Z",
+  "id": "GOMjIOnWLg5sVB1I",
+  "name": "browserless",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "f8c4d732-328e-4350-b272-b35b807965ef",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://production-sfo.browserless.io/chromium/bql",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "2SOam05BTvn8IuS86fb35a9bf8b446314718c3606e7efe465"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"mutation Screenshot($url: String!) { goto(url: $url, waitUntil: load) {status } screenshot(type: jpeg) {base64 }}\",\n  \"variables\": {\n    \"url\": \"https://www.example.com\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fef70181-2d2a-4bff-8b65-996cbba47f34",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "72f381e2-3c5c-406b-9289-093c2101f737",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-11T01:24:17.500Z",
+      "updatedAt": "2025-09-11T01:24:17.500Z",
+      "role": "workflow:owner",
+      "workflowId": "GOMjIOnWLg5sVB1I",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": []
+}
