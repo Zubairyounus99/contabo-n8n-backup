@@ -1,0 +1,2859 @@
+{
+  "createdAt": "2025-09-09T00:49:07.096Z",
+  "updatedAt": "2025-09-13T17:18:22.814Z",
+  "id": "pGULnWeOIJK3gkYf",
+  "name": "Scheduled Time-Flipped",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2112,
+        112
+      ],
+      "id": "b0fc3e2a-1338-43eb-b053-587e96fd539a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1824,
+        256
+      ],
+      "id": "272c4cea-7201-4038-a033-0b87ea8a71f0",
+      "name": "Get row(s) in sheet",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f5e25c32-c310-4a10-bc66-e8ea2477c2b4",
+              "leftValue": "={{ $json['Job Status'] }}",
+              "rightValue": "Completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1664,
+        240
+      ],
+      "id": "cf9df58a-20ff-4bea-a2ce-56a84849d4dc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d56dea8-494d-450f-a9fd-b18c5fa8a371",
+              "name": "Series Title",
+              "value": "={{ $json['Series Title'] }}",
+              "type": "string"
+            },
+            {
+              "id": "001f6d66-2202-48c7-8c4e-c3bfffdef0ea",
+              "name": "Video Title",
+              "value": "={{ $json['Video Title'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f9fce6dd-4be0-4d2d-90a0-c8d8fdaab66a",
+              "name": "Next Part Title",
+              "value": "={{ $json['Next Video Title'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ef1fa2a-1cc1-4b20-9454-ffbc20d739d4",
+              "name": "Part No",
+              "value": "={{ $json['Part No.'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7c8170e2-52cc-4130-a872-f279f1e50524",
+              "name": "Length of Video",
+              "value": "={{ $json['length of Video Required'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c54c24b6-0645-42ed-a271-edfca9a43876",
+              "name": "Length of Each Section",
+              "value": "={{ $json['length of each Section '] }}",
+              "type": "string"
+            },
+            {
+              "id": "775052c6-1db9-4f62-a920-cbdd77e4c7d3",
+              "name": "Platform",
+              "value": "Time Flipped",
+              "type": "string"
+            },
+            {
+              "id": "640cf21a-b164-40b9-a920-1ee6e72e7c85",
+              "name": "script",
+              "value": "={{ $json.Script }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        272
+      ],
+      "id": "3b63317f-fd9f-4672-a6bb-1406b7838076",
+      "name": "VIdeo Details"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"scenes\": [\n    {\n      \"scene_number\": 1,\n      \"narration\": \"Your text here\"\n    }\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        480
+      ],
+      "id": "b2e06bd0-e393-45c9-b134-233827ff635d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        304,
+        336
+      ],
+      "id": "cc6f7e90-e6e1-43c5-9ae8-6f315018fbec",
+      "name": "Loop Over Items",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.scenes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        320
+      ],
+      "id": "1fd71d3f-6998-4692-8492-991b46996f30",
+      "name": "Create Table"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88192cdb-0dec-4960-9a36-8d19874f1a97",
+              "name": "scenes",
+              "value": "={{ $json.scene_number }}",
+              "type": "string"
+            },
+            {
+              "id": "90cfd980-85b9-4f52-af26-1ab94f8a8ec1",
+              "name": "narrations",
+              "value": "={{ $json.narration }}",
+              "type": "string"
+            },
+            {
+              "id": "a3059d17-ffa7-42ea-9a86-b2973a705361",
+              "name": "nca",
+              "value": "http://173.212.233.128:8081",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        448
+      ],
+      "id": "f96822b1-9408-43a1-8e37-7c37326966ad",
+      "name": "Rename"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.together.xyz/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell-Free"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "steps",
+              "value": "={{ 4 }}"
+            },
+            {
+              "name": "n",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "width",
+              "value": "={{ 1280 }}"
+            },
+            {
+              "name": "height",
+              "value": "={{ 720 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1968,
+        432
+      ],
+      "id": "8a5194a1-d129-49d0-a108-9534ff3980e1",
+      "name": "Free Images",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "xNZtY56kIowFixlg",
+          "name": "together Ai"
+        },
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "nca-toolkit",
+        "fileName": "=Raw%2F{{ $json.scenes }}.mp3",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        928,
+        448
+      ],
+      "id": "cccd280c-3db7-4179-b1a9-47507553fca0",
+      "name": "Audio upload to MiniO1",
+      "retryOnFail": false,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "45f0b865-2cd7-4dc7-b329-631446d94f43",
+              "name": "=audio",
+              "value": "={{ \n  $('Rename').item.json.nca.trim().substring(0, $('Rename').item.json.nca.trim().lastIndexOf(':')) + \n  \":9000/nca-toolkit/\" + \n  encodeURIComponent(\"Raw/\" + $('Generate Voices from Kokoro TTS').item.json.scenes.trim()) + \n  \".mp3\"\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1136,
+        448
+      ],
+      "id": "e8acedc3-b042-49c5-b3eb-32e24788d442",
+      "name": "Get Audio Link"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/media/metadata",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "media_url",
+              "value": "={{ $json.audio }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        448
+      ],
+      "id": "1a6929cf-0b1d-4bc1-a371-9cb0e345a33f",
+      "name": "metadata (Audio)",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/image/convert/video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.data[0].url }}\",\n  \"length\":  {{ $('metadata (Audio)').item.json.response.duration }},\n  \"frame_rate\": 24,\n  \"zoom_speed\": 3,\n  \"id\": \"request-123\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        432
+      ],
+      "id": "f8f9b4c0-57d3-418d-a109-280b6eb33720",
+      "name": "Image to Video",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Rename').item.json.nca }}/v1/ffmpeg/compose",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thekey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"merge-video-voiceover-youtube\",\n  \"inputs\": [\n    {\n      \"file_url\": \"{{ $json.response }}\"\n    },\n    {\n      \"file_url\": \"{{ $('Get Audio Link').item.json.audio }}\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:a]volume=2.0[boosted_audio]\"\n    },\n    {\n      \"filter\": \"[0:v]scale=iw*min(1920/iw\\\\,1080/ih):ih*min(1920/iw\\\\,1080/ih),pad=1920:1080:(1920-iw*min(1920/iw\\\\,1080/ih))/2:(1080-ih*min(1920/iw\\\\,1080/ih))/2[scaled_video]\"\n    },\n    {\n      \"filter\": \"[scaled_video][boosted_audio]concat=n=1:v=1:a=1[outv][outa]\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        {\n          \"option\": \"-map\",\n          \"argument\": \"[outv]\"\n        },\n        {\n          \"option\": \"-map\",\n          \"argument\": \"[outa]\"\n        },\n        {\n          \"option\": \"-c:v\",\n          \"argument\": \"libx264\"\n        },\n        {\n          \"option\": \"-c:a\",\n          \"argument\": \"aac\"\n        }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"duration\": true,\n    \"filesize\": true\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2672,
+        432
+      ],
+      "id": "f4953dbf-35c0-42e4-9e0a-2ab727ee8b1e",
+      "name": "Merge Audio and Video",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "response[0].file_url",
+              "renameField": true,
+              "outputFieldName": "videos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -112
+      ],
+      "id": "2871f042-7fbb-4a1f-9a22-2b4ecac9cfe6",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get array of URLs from previous node\nconst urls = items[0].json.videos;\n\n// Transform each URL into { video_url: \"<url>\" }\nconst wrapped = urls.map(url => ({ video_url: url }));\n\n// Return in the correct API format\nreturn [\n  {\n    json: {\n      video_urls: wrapped,\n      id: \"concat-job-001\"   // you can make this dynamic if you want\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -128
+      ],
+      "id": "534233b2-b37b-41b5-9173-3d5b752baa3f",
+      "name": "Create Array"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://173.212.233.128:8081/v1/video/concatenate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        -128
+      ],
+      "id": "40b63344-fcb6-4202-9b6a-7f7224c57b41",
+      "name": "Video Concatinate",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081//v1/ffmpeg/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": [\n    {\n      \"file_url\": \"{{ $('Video Concatinate').item.json.response }}\"\n    },\n    {\n      \"file_url\": \"http://173.212.233.128:9000/time-flipped/Logo%2Flogo-time%20Flipped.png\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:v]scale=200:200[logo];[0:v][logo]overlay=W-w-50:50\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        { \"option\": \"-f\", \"argument\": \"mp4\" },\n        { \"option\": \"-c:v\", \"argument\": \"libx264\" }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"thumbnail\": false,\n    \"filesize\": true,\n    \"duration\": true,\n    \"bitrate\": true\n  },\n  \"id\": \"overlay_logo_top\"\n}\n",
+        "options": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1264,
+        -144
+      ],
+      "id": "3556aee8-0dc5-49be-ab18-0b2633db02db",
+      "name": "Logo",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/ffmpeg/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=  {\n    \"id\": \"add-bg-music-youtube-landscape\",\n    \"inputs\": [\n      {\n        \"file_url\": \"{{ $('Logo').item.json.response[0].file_url }}\"\n      },\n      {\n        \"file_url\": \"http://173.212.233.128:9000/time-flipped/music%2FStillness%20-%20Futuremono.mp3\"\n      }\n    ],\n    \"filters\": [\n      {\n        \"filter\": \"[0:v]scale=iw*min(1920/iw\\\\,1080/ih):ih*min(1920/iw\\\\,1080/ih),pad=1920:1080:(1920-iw*min(1920/iw\\\\,1080/ih))/2:(1080-ih*min(1920/iw\\\\,1080/ih))/2[v]\"\n      },\n      {\n        \"filter\": \"[1:a]aloop=loop=-1:size=2e+09,volume=0.2[bgm]\"\n      },\n      {\n        \"filter\": \"[0:a]volume=2.0[voice]\"\n      },\n      {\n        \"filter\": \"[voice][bgm]amix=inputs=2:duration=first:dropout_transition=3[a]\"\n      }\n    ],\n    \"outputs\": [\n      {\n        \"options\": [\n          { \"option\": \"-map\", \"argument\": \"[v]\" },\n          { \"option\": \"-map\", \"argument\": \"[a]\" },\n          { \"option\": \"-c:v\", \"argument\": \"libx264\" },\n          { \"option\": \"-c:a\", \"argument\": \"aac\" },\n          { \"option\": \"-shortest\" },\n          { \"option\": \"-f\", \"argument\": \"mp4\" }\n        ]\n      }\n    ],\n    \"metadata\": {\n      \"duration\": true,\n      \"filesize\": true,\n      \"bitrate\": true\n    }\n  }",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        -144
+      ],
+      "id": "b314ede3-1a48-4709-9333-fbbdc73cf89c",
+      "name": "Add Background Music",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8880/v1/audio/speech",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "kokoro"
+            },
+            {
+              "name": "input",
+              "value": "={{ $json.narrations }}"
+            },
+            {
+              "name": "voice",
+              "value": "af_bella"
+            },
+            {
+              "name": "speed",
+              "value": "0.9"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        448
+      ],
+      "id": "aae591f0-3451-4af1-82fb-85001a9be4a5",
+      "name": "Generate Voices from Kokoro TTS",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        832
+      ],
+      "id": "c2928ad7-b749-4f3b-be88-d1cb5600aa5b",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are expert in creating scenes and narrations.\nhere is the script: {{ $json.output }} or{{ $json.Output }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an Expert Scene Creator AI agent.  \n\nYour role is to take a video script and break it into short narration scenes for TTS with natural pacing.  \n\n### Instructions:\n\n1. **Scene Splitting**  \n   - Break the script into meaningful narration units.  \n   - Each scene should be {{ $('VIdeo Details').item.json['Length of Each Section'] }} of narration. \n   - If a sentence is long, split naturally while keeping meaning intact.  \n   - Avoid creating scenes shorter than 10 seconds unless absolutely necessary.  \n\n2. **Text Cleaning Rules**  \n   - Do NOT rewrite, paraphrase, or invent text.  \n   - Use the **exact same words** from the script.  \n   - Remove formatting like headings (**Hook**, **Narration**, **Outro**) and unnecessary symbols.  \n   - Replace any **multiple full stops (`..` or `...`)** with a clean single Space.  \n   - Remove any emotional or stage directions such as `[pause]`, `[silence]`, `[ohh]`, `[laugh]`.  \n   - Final output should contain only **clean text narration** without even two or more consecutive dots.  \n\n3. **Punctuation for TTS**  \n   - Ensure sentences have proper commas, ellipses, or dashes to guide rhythm.  \n   - Use ellipses `...` for suspense or curiosity.  \n   - Use exclamation marks `!` for excitement or surprise.  \n   - Use question marks `?` for reflective or rhetorical questions.  \n\n4. **Output Format**  \n   - Must be valid JSON.  \n   - Each scene contains:  \n     - `scene_number`: Sequential starting from 1.  \n     - `narration`: Exact cleaned text for that scene.  \n\n### Example:  \nIf the script is:  \n\"Hey explorers!! What if there were not one.. but two Earths?? Two planets—almost identical—both capable of supporting life. [pause][pause]\"  \n\nThen the output should be:  \n\n```json\n{\n  \"scenes\": [\n    {\n      \"scene_number\": 1,\n      \"narration\": \"Hey explorers!\"\n    },\n    {\n      \"scene_number\": 2,\n      \"narration\": \"What if there were not one... but two Earths?\"\n    },\n    {\n      \"scene_number\": 3,\n      \"narration\": \"Two planets—almost identical—both capable of supporting life!\"\n    }\n  ]\n}\n\nScript: {{ $json.Output }} or {{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -560,
+        320
+      ],
+      "id": "fbc78d14-eebf-42f5-b130-bed870d60a3b",
+      "name": "Scenes Creation"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        672
+      ],
+      "id": "cca3093e-4834-4245-b601-a6d8886d3925",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k1wU8v2Duj2lDC3p",
+          "name": "Gemini-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=main Title:{{ $json['Series Title'] }}\nVideo Title:{{ $json['Video Title'] }}\nNext Part Title: {{ $json['Next Part Title'] }}\nPart No:{{ $json['Part No'] }}\nLength of Video:{{ $json['Length of Video'] }}\nLength of Each Section:{{ $json['Length of Each Section'] }}\nPlatform or Channel: {{ $json.Platform }}",
+        "options": {
+          "systemMessage": "=You are the **Middle Scriptwriting Orchestrator Agent** for the YouTube channel **“Time Flipped”**.  \nYour role is to ensure that long, engaging, and motivational scripts are generated seamlessly by attached sub-agents.  \nYou do not write scripts yourself — you orchestrate the workflow.\nyou need to communicate only with sub agents, provide them the topic, required length and context,one by one and at the end merge them and give final reuired length of video script. \nfor example, user ask to give script of 10 minutes (1800 words) you will first provide the first part of script outlines to ai agent 1, collect that data and then pass to the 2nd agent, retrieve back and then again give the context to next agent and so on to the six agents. at the aend retireve all, combine and provide required output length of script. \n\n---  \n### CONTEXT:  \n- Channel: **Time Flipped**  \n- Category: Knowledge, facts, and research on **astronomy, time, nature, existence, and thought-provoking topics**.  \n- Audience: Students, thinkers, dreamers, and professionals.  \n- Style Reference: Use **Time-Flipped-Scripts tool** (Pinecone DB). These contain transcriptions of *Life_Laps*.  \n  - Do **NOT** copy content.  \n  - Only emulate **style, flow, engagement, and narration tone**.  \n\n---  \n### INPUTS YOU WILL RECEIVE:  \n1. **Main Title** →   {{ $json[\"Series Title\"] }}  \n2. **Video Title** →  {{ $json[\"Video Title\"] }}  \n3. **Requested Video Length** → {{ $json[\"Length of Video\"] }} (in minutes).  \n   - Target words = `180 * {{ $json[\"Length of Video\"] }}` minutes  \n   - Split into **300–350 word sections**.  \n\n---  \n### YOUR RESPONSIBILITIES:  \n1. **Length Management**:  \n   - Calculate the total required word count.  \n   - Divide into segments of 300–350 words.  \n   - Example: For a 10-minute video (~1800 words), orchestrate 6 sub-agents.  \n\n2. **Tool Orchestration**:  \n   - Time-Flipped-Scripts: Use this tols to Retrieve style references (tone/format only).  \n   - Ai agent: Use this tols to Generates section 1 (300–350 words).  \n   - Ai agent1: Use this tols to Generates section 2 (300–350 words).  \n   - Ai agent2: Use this tols to Generates section 3 (300–350 words).  \n   - Ai agent3: Use this tols to Generates section 4 (300–350 words).  \n   - Ai agent4: Use this tols to Generates section 5 (300–350 words).  \n   - Ai agent5: Use this tols to Generates section 6 (300–350 words).  \n   - Ai agent6: Use this tols to Generates section 7 (300–350 words).  \n   - Ai agent7: Use this tols to Generates section 8 (300–350 words).  \n   - Ai agent8: Use this tols to Generates section 9 (300–350 words).  \n   - Ai agent9: Use this tols to Generates section 10 (300–350 words).  \n\n   ⚠️ Only call as many agents as needed based on requested word length.  \n\n3. **Execution Flow**:  \n   - Retrieve **style guidance**.  \n   - Send **Title + Context + Style Guidance + Section Index + Continuity Note** to the active sub-agent.  \n   - Each new agent continues from the previous section smoothly.  \n   - Keep the narrative flow consistent (no “part 1/2” labels).  \n\n4. **Final Assembly**:  \n   - Merge all sections into one continuous narrative.  \n   - No visible breaks, numbers, or headers.  \n   - Ensure final script equals or slightly exceeds the requested length.  \n\n---  \n### SCRIPT REQUIREMENTS FOR EACH SUB-AGENT:  \n- **Hook (Opening)**: A curiosity-driven start.  \n- **Narration Body**: Mix of knowledge, story, and reflection.  \n- **Engagement Hooks**: Invite comments/likes naturally.  \n- **Motivational Layer**: Connect science & life lessons.  \n- **Conclusion**: Either curiosity setup for future or strong wrap-up.  \n- **Language**: Simple, natural, engaging & Easy to understand quickly. don't use too complex or advanced words. use words which is common to speak and hear in normal normal.\n- **Style**:  keep the style human generated or written. it should not look like AI Generated.\n\n---  \n### OUTPUT FORMAT:  \nDeliver one final **clean, continuous script**.  \nDo **NOT** include agent names, section labels, or extra formatting.  \n",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -976,
+        320
+      ],
+      "id": "59b725ec-a2b9-4903-a950-f1339d11fb49",
+      "name": "Script Writer"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "bucketName": "time-flipped",
+        "folderName": "videos",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        -384
+      ],
+      "id": "ef2e3cf9-e195-41c1-9fb6-0eac94234283",
+      "name": "Create a folder",
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3024,
+        640
+      ],
+      "id": "1f30312d-aa30-4fb2-bd4d-edae50a7e167",
+      "name": "Wait",
+      "webhookId": "686f0839-9f4f-4d31-9a5c-5b7f76800da1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/video/caption",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_url\": \"{{ $json.file_url }}\",\n  \"settings\": {\n    \"style\": \"highlight\",\n    \"line_color\": \"#FFFFFF\",\n    \"word_color\": \"#FFFF00\",\n    \"outline_color\": \"#000000\",\n    \"all_caps\": true,\n    \"max_words_per_line\": 4,\n    \"position\": \"bottom_center\",\n    \"alignment\": \"center\",\n    \"font_family\": \"DejaVu Sans\",\n    \"font_size\": 60,\n    \"bold\": true,\n    \"italic\": true,\n    \"underline\": false,\n    \"strikeout\": false,\n    \"outline_width\": 2,\n    \"spacing\": 1,\n    \"angle\": 0,\n    \"shadow_offset\": 2\n  },\n  \"replace\": [\n    { \"find\": \"um\", \"replace\": \"\" },\n    { \"find\": \"...\", \"replace\": \"\" },\n    { \"find\": \"like\", \"replace\": \"\" }\n  ],\n  \"id\": \"job-caption-001\",\n  \"language\": \"en\"\n}\n",
+        "options": {
+          "timeout": 15000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3408,
+        0
+      ],
+      "id": "0cf6b1bd-379e-4555-994a-b7b94720902d",
+      "name": "add Captions",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zubairyounus99@gmail.com",
+        "subject": "={{ $('VIdeo Details').item.json['Part No'] }}-{{ $('VIdeo Details').item.json['Series Title'] }}-Generation Completed",
+        "emailType": "text",
+        "message": "=Hi Zubair,\n\nyour video titled \"{{ $('VIdeo Details').item.json['Series Title'] }}\" for which \"{{ $('VIdeo Details').item.json['Part No'] }}\" of  the video title \"{{ $('VIdeo Details').item.json['Video Title'] }}\" is completed.\n\n\nhere is the link of Complete video in all respects:\n{{ $json.response }}\n\nother Links are also below:\n\nwithout Captions and after adding background Music:\n{{ $('Add Background Music').item.json.response[0].file_url }}\n\nwithout Logo:\n{{ $('Logo').item.json.response[0].file_url }}\n\nhere is the Raw Video:\n{{ $('Video Concatinate').item.json.response }}\n\nthnaks,\nZubair",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4352,
+        -176
+      ],
+      "id": "de5eb703-15ab-4f43-81e9-b97f9a147dc6",
+      "name": "Send Completion Mesage.",
+      "webhookId": "b66298ad-d879-40e4-8ed0-847b61216bc1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an amazing image prompt generator and you are given \nNarration:  {{ $('Rename').item.json.narrations }}",
+        "options": {
+          "systemMessage": "=You are an Expert Image Prompt Generator AI agent.  \n\nYour role is to convert narration text into highly detailed, imaginative prompts for Flux Schnell (Stable Diffusion-like) image generation.  \n\n### Instructions:\n\n1. **Context Awareness**  \n   - You are given:  \n     - The **narration text** (the specific line to visualize).  \n     - The **complete part script** (surrounding context).  \n     - Use the **narration as the core focus**, but also adapt the visual to stay consistent with the overall theme and mood of the full part script.  \n    -The chat memory of you that which types of prompt you generated for previous narration.use this memory to link previous execution to ensure consistent visuals in a flow which matches the previous context of last prompt generated and use the script to ensure it also aligns with next parts generation.\n   - Example:  \n     - Narration: \"The blind spot in the human eye.\"  \n     - Full script theme: vision, perception, science.  \n     - Image → surreal close-up of a human eye with a glowing void, realistic but slightly abstract to match scientific + philosophical tone.  \n\n2. **Dynamic Adaptation**  \n   - Do NOT use the same style for every narration.  \n   - Choose **style, camera mode, and imagery** based on narration + script theme.  \n   - Examples:  \n     - Cosmos, stars, time → cosmic, surreal, sci-fi cinematic.  \n     - Nature, rain, forests → natural, tranquil, atmospheric photography.  \n     - Human emotions, philosophy → symbolic, conceptual art.  \n     - Scientific, factual → realistic, diagrammatic, documentary style.  \n\n3. **Image Prompt Elements**  \n   Every generated prompt must contain:  \n   - **Camera angle** → wide shot, close-up, aerial, cinematic, macro, etc.  \n   - **Environment details** → nature, galaxies, cities, laboratory, abstract, etc.  \n   - **Lighting** → dramatic cosmic glow, soft daylight, neon futuristic, golden hour, etc.  \n   - **Style** → cinematic, hyper-realistic 8K, surreal digital art, abstract sketch, documentary photography, etc.  \n   - **Colors** → vivid galaxy tones, warm earth tones, cold futuristic blues, monochrome, etc.  \n\n4. **Interpretive Visualization**  \n   - Never include the narration text itself.  \n   - Visualize the essence of the narration.  \n   - Use metaphorical or literal imagery depending on theme.  \n   - Example transformations:  \n     - Narration: \"The blind spot in the human eye.\"  \n       → Prompt: \"A surreal close-up of a human eye dissolving into a swirling black void, glowing veins fading into darkness, cinematic macro shot, dramatic high-contrast lighting, ultra-realistic 8K style.\"  \n     - Narration: \"The first drops of rain touched the earth.\"  \n       → Prompt: \"Cinematic close-up of raindrops hitting dry soil, dust rising in golden sunlight, ultra-detailed 8K natural photography.\"  \n\n5. **Output Format**  \n   - Return only the **image prompt** as plain text.  \n   - No JSON, no explanation, no extra formatting.  \n\n---\n\n### Inputs:\n- Narration: {{ $('Rename').item.json.narrations }}  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        448
+      ],
+      "id": "1c66c3d2-e0f5-4cb3-99c6-3b93c505cfd7",
+      "name": "Image Prompt generator"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88192cdb-0dec-4960-9a36-8d19874f1a97",
+              "name": "scene_number",
+              "value": "={{ $('Loop Over Items').item.json.scene_number }}",
+              "type": "string"
+            },
+            {
+              "id": "90cfd980-85b9-4f52-af26-1ab94f8a8ec1",
+              "name": "narration",
+              "value": "={{ $('Loop Over Items').item.json.narration }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1888,
+        864
+      ],
+      "id": "ff8f0f2c-90b1-435d-8ce2-1b82045150d4",
+      "name": "Rename after error",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Concatination": "={{ $('Video Concatinate').item.json.response }}",
+            "row_number": 0,
+            "Video Title": "={{ $('VIdeo Details').item.json['Video Title'] }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video",
+              "displayName": "Final Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sr. No",
+              "displayName": "Sr. No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "code",
+              "displayName": "code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "job_id",
+              "displayName": "job_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pid",
+              "displayName": "pid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "queue_id",
+              "displayName": "queue_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "queue_length",
+              "displayName": "queue_length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "queue_time",
+              "displayName": "queue_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response",
+              "displayName": "response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "run_time",
+              "displayName": "run_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_time",
+              "displayName": "total_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        -416
+      ],
+      "id": "92667a93-1bd9-4ed9-ada4-0412cf1ac2d2",
+      "name": "Update Concatination URL in Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Logo Status": "={{ $json.response[0].file_url }}",
+            "Video Title": "={{ $('VIdeo Details').item.json['Video Title'] }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video",
+              "displayName": "Final Video",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        -448
+      ],
+      "id": "717e5c14-614a-4564-9b9b-2e61bb09be4e",
+      "name": "Update Logo URL",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Background Music": "={{ $json.response[0].file_url }}",
+            "Video Title": "={{ $('VIdeo Details').item.json['Video Title'] }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1840,
+        -464
+      ],
+      "id": "401df394-1009-4c06-bfe6-642bbeaad166",
+      "name": "Update Music URL",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "response",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2944,
+        -144
+      ],
+      "id": "6377079e-dd24-4e3e-9da7-47ba7a96e8ca",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get array of URLs from previous node\nconst urls = items[0].json.videos;\n\n// Transform each URL into { video_url: \"<url>\" }\nconst wrapped = urls.map(url => ({ video_url: url }));\n\n// Return in the correct API format\nreturn [\n  {\n    json: {\n      video_urls: wrapped,\n      id: \"concat-job-002\"   // you can make this dynamic if you want\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3648,
+        -160
+      ],
+      "id": "e06640d7-ea61-4d4d-9703-c3fc2a6d037a",
+      "name": "Create Array1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3200,
+        -144
+      ],
+      "id": "90ee052e-32ee-4ab3-bf0e-0457e378dc3a",
+      "name": "Loop Over Items2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/media/metadata",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"media_url\":\"{{ $('Add Background Music').item.json.response[0].file_url }}\"\n}",
+        "options": {
+          "timeout": 1500000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2352,
+        -144
+      ],
+      "id": "ada6ac1c-a5bd-4769-af81-6617197d3451",
+      "name": "metadata",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://173.212.233.128:8081/v1/video/split",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_url\": \"{{ $('Add Background Music').item.json.response[0].file_url }}\",\n  \"splits\": [\n    {\n      \"start\": \"00:00:00\",\n      \"end\": \"00:02:00\"\n    },\n    {\n      \"start\": \"00:02:00\",\n      \"end\": \"00:04:00\"\n    },\n    {\n      \"start\": \"00:04:00\",\n      \"end\": \"00:06:00\"\n    },\n    {\n      \"start\": \"00:06:00\",\n      \"end\": \"00:08:00\"\n    },\n    {\n      \"start\": \"00:08:0\",\n      \"end\": \"00:10:00\"\n    },\n    {\n      \"start\": \"00:10:00\",\n      \"end\": \"00:12:00\"\n    },\n    {\n      \"start\": \"00:12:00\",\n      \"end\": \"00:14:00\"\n    },\n    {\n      \"start\": \"00:14:0\",\n      \"end\": \"00:16:00\"\n    },\n    {\n      \"start\": \"00:16:00\",\n      \"end\": \"00:18:00\"\n    },\n    {\n      \"start\": \"00:18:0\",\n      \"end\": \"00:20:00\"\n    },\n    {\n      \"start\": \"00:20:00\",\n      \"end\": \"00:22:00\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2736,
+        -144
+      ],
+      "id": "9e48400f-9977-40a1-9f64-df6f008d7b9b",
+      "name": "generate_splits",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "response",
+              "renameField": true,
+              "outputFieldName": "videos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3456,
+        -160
+      ],
+      "id": "15aa0060-af20-4278-8c74-b508b82481a8",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        -288
+      ],
+      "id": "f7b8af1d-657a-4f95-af07-05b086508cbf",
+      "name": "Wait3",
+      "webhookId": "fda586ab-2cf7-4b69-a150-5f9d08b5bc55"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        -288
+      ],
+      "id": "e2897236-5382-4047-973f-1598e7dcf8d9",
+      "name": "Wait1",
+      "webhookId": "c9a235c1-505a-47c5-8f06-a7bdf81617f3"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1984,
+        -304
+      ],
+      "id": "7ea968da-47e9-4822-817b-267f0115c58a",
+      "name": "Wait6",
+      "webhookId": "03ad9a54-cdd0-4c46-bc54-078de2cecdbb"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('VIdeo Details').item.json.Platform }}",
+        "tableName": "Time_Flipped_Automation_Chat"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -1152,
+        544
+      ],
+      "id": "20e771bf-cc9a-4bcb-84cc-b30cb6b2cc5a",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Final Video Link": "={{ $json.response }}",
+            "Job Status": "Completed",
+            "Video Title": "={{ $('VIdeo Details').item.json['Video Title'] }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Video Title",
+              "displayName": "Next Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of Video Required",
+              "displayName": "length of Video Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4112,
+        -336
+      ],
+      "id": "44391d85-3f99-4340-91c1-077e3de5e1df",
+      "name": "Update Complete Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://173.212.233.128:8081/v1/video/concatenate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3872,
+        -160
+      ],
+      "id": "e7f62376-d048-4269-934c-b81736230e95",
+      "name": "Complete Video",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        272
+      ],
+      "id": "9b5b30ee-1ea6-4c5f-ab61-fe5d5a92e270",
+      "name": "Limit to 1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('VIdeo Details').item.json.Platform }}",
+        "tableName": "Time_Flipped_Automation_Chat",
+        "contextWindowLength": 4
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1680,
+        640
+      ],
+      "id": "5a1fdbb5-b080-40d2-a714-d3f6cc7f8e49",
+      "name": "Postgres Chat Memory2",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KblZaWgyX2Hk0PLt",
+          "mode": "list",
+          "cachedResultName": "Thumbnail creation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4272,
+        64
+      ],
+      "id": "36cb42f2-f5df-4f13-a25e-52fe453a28ea",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2528,
+        -144
+      ],
+      "id": "03a52a20-03e8-43d5-b99b-11c7dc00626f",
+      "name": "Wait9",
+      "webhookId": "156d688a-05c7-426e-a2dd-2e7791170a74"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2352,
+        432
+      ],
+      "id": "3f58661f-8d3d-4004-8847-04b7e6924e1e",
+      "name": "Wait2",
+      "webhookId": "f830ecba-9d57-4d89-b400-9a0f4046e989"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrive scripts sample for refernce ",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "time-flipped-scripts",
+          "mode": "list",
+          "cachedResultName": "time-flipped-scripts"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -864,
+        640
+      ],
+      "id": "ece8b6c6-efbf-4a5d-b28c-e90fbf5d0f23",
+      "name": "Time-Flipped-Scripts",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Tzo8ULCdQIZZdu6l",
+          "name": "Time_Flipped"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "85895c46-c0eb-4da7-ac9e-abffa86b12df",
+              "leftValue": "={{ $json.script }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1168,
+        240
+      ],
+      "id": "240b9494-b29d-4ae7-a804-f9884c87a444",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ff194ae-49fb-4285-a5d6-9b54177c48a7",
+              "name": "Output",
+              "value": "={{ $json.script }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -704,
+        240
+      ],
+      "id": "b0ba6c9b-b961-4405-ad4b-9ec74347d8a4",
+      "name": "Rename output"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        752
+      ],
+      "id": "4c5eee44-4858-4620-87c1-df60bf6f1089",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "mfO0dqgKTdN60Ofd",
+          "name": "zubair-1 Paid"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3.1:free",
+        "options": {
+          "maxTokens": 32768
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        512
+      ],
+      "id": "6dd5d8c2-f28e-4a11-8f51-38ab430fa320",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "SG6qjMpAXeVfPdJC",
+          "name": "zubair-1 paid accound"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3.1:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        672
+      ],
+      "id": "3e32d173-6598-4226-ac54-10fa621338ff",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "SG6qjMpAXeVfPdJC",
+          "name": "zubair-1 paid accound"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3.1:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        528
+      ],
+      "id": "727f2a16-8fad-4148-809a-b2e2d438f353",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "SG6qjMpAXeVfPdJC",
+          "name": "zubair-1 paid accound"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2112,
+        304
+      ],
+      "id": "d0922819-999d-44c7-a3e4-7f34e14df9e9",
+      "name": "Trigger at 1am"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2112,
+        480
+      ],
+      "id": "38331d7a-7c55-48f4-8196-0d5a285fc8d5",
+      "name": "Trigger at 6am"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Limit to 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Table": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename": {
+      "main": [
+        [
+          {
+            "node": "Generate Voices from Kokoro TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio upload to MiniO1": {
+      "main": [
+        [
+          {
+            "node": "Get Audio Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio Link": {
+      "main": [
+        [
+          {
+            "node": "metadata (Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "metadata (Audio)": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Free Images": {
+      "main": [
+        [
+          {
+            "node": "Image to Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Image to Video": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Merge Audio and Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Create Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array": {
+      "main": [
+        [
+          {
+            "node": "Video Concatinate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Concatinate": {
+      "main": [
+        [
+          {
+            "node": "Update Concatination URL in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Logo": {
+      "main": [
+        [
+          {
+            "node": "Update Logo URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Add Background Music": {
+      "main": [
+        [
+          {
+            "node": "Update Music URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Generate Voices from Kokoro TTS": {
+      "main": [
+        [
+          {
+            "node": "Audio upload to MiniO1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Time-Flipped-Scripts",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scenes Creation": {
+      "main": [
+        [
+          {
+            "node": "Create Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Script Writer": {
+      "main": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add Captions": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Image Prompt generator": {
+      "main": [
+        [
+          {
+            "node": "Free Images",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Rename after error": {
+      "main": [
+        []
+      ]
+    },
+    "VIdeo Details": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Concatination URL in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Logo URL": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Music URL": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array1": {
+      "main": [
+        [
+          {
+            "node": "Complete Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add Captions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "metadata": {
+      "main": [
+        [
+          {
+            "node": "Wait9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "generate_splits": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Create Array1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Add Background Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Logo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Complete Status": {
+      "main": [
+        []
+      ]
+    },
+    "Complete Video": {
+      "main": [
+        [
+          {
+            "node": "Update Complete Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Completion Mesage.",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 1": {
+      "main": [
+        [
+          {
+            "node": "VIdeo Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait9": {
+      "main": [
+        [
+          {
+            "node": "generate_splits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Merge Audio and Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time-Flipped-Scripts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Rename output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Script Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename output": {
+      "main": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Scenes Creation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger at 1am": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger at 6am": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "UUKqPWIjdYo6Togj",
+    "timeSavedPerExecution": 60
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        12
+      ]
+    },
+    "node:Google Sheets Trigger": {
+      "documentId": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+      "sheetId": 0,
+      "lastRevision": 442,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc&revision=442&exportFormat=xlsx"
+    },
+    "node:Trigger at 1am": {
+      "recurrenceRules": []
+    },
+    "node:Trigger at 6am": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "04410bd3-5749-4414-8daf-2e46d045628a",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "createdAt": "2025-09-09T00:49:07.096Z",
+      "updatedAt": "2025-09-09T00:49:07.096Z",
+      "role": "workflow:owner",
+      "workflowId": "pGULnWeOIJK3gkYf",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": [
+    {
+      "createdAt": "2025-09-08T06:06:20.811Z",
+      "updatedAt": "2025-09-08T06:06:20.811Z",
+      "id": "RNWde51of0nnQzPD",
+      "name": "Video Automation"
+    }
+  ]
+}
