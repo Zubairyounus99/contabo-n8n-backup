@@ -1,0 +1,227 @@
+{
+  "createdAt": "2025-09-12T02:57:36.620Z",
+  "updatedAt": "2025-09-13T05:07:43.515Z",
+  "id": "HVZnoICafB9m0uLD",
+  "name": "new video Processing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -96
+      ],
+      "id": "592a6d4f-d06a-42f5-b810-db24de519a58",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb4a1ef4-9a0a-4b82-902c-11bbf618b836",
+              "name": "Title",
+              "value": "={{ $json.Key }}",
+              "type": "string"
+            },
+            {
+              "id": "a2ed2d73-09aa-4ab5-9d19-73ba7d3257f1",
+              "name": "video_url",
+              "value": "=http://173.212.233.128:9000/life-unfolded/{{ encodeURIComponent($json.Key) }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "66982084-e6e2-4c23-b11a-f1f76553a608",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/media/convert/mp3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"media_url\":\"{{ $json.video_url }}\",\n    \"bitrate\": \"256k\",\n    \"sample_rate\": 44100,\n    \"id\": \"five\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "d285b32c-f9c3-457d-8c9c-a1ded81291da",
+      "name": "Convert MP3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "bucketName": "life-unfolded",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -96
+      ],
+      "id": "9dabdbe2-ef85-4175-b273-ce0c36eb087f",
+      "name": "Get many files",
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -96
+      ],
+      "id": "777a27f2-f694-429f-a6b0-1e08b8d8c600",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        224
+      ],
+      "id": "40cab084-c2db-4130-8f45-4042e259d685",
+      "name": "When chat message received",
+      "webhookId": "52782b99-bcfb-4ab4-9afd-784dd2402c60"
+    },
+    {
+      "parameters": {
+        "url": "https://tts.ztechai.us:11434/v1/chat/completion",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"Authorization\": \"Bearer sk-4a7b85dce44749cc9ee5a56d33b2ebf9\"\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-coder:6.7b\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": \"Explain recursion with an example.\"}\n  ]\n}\n",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        224
+      ],
+      "id": "0b0faf09-5793-406c-b400-3704dc344578",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert MP3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many files": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert MP3": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "59feb642-445a-4d9c-955c-ff1381343746",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-12T02:57:36.620Z",
+      "updatedAt": "2025-09-12T02:57:36.620Z",
+      "role": "workflow:owner",
+      "workflowId": "HVZnoICafB9m0uLD",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": []
+}
