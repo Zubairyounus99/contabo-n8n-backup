@@ -1,0 +1,295 @@
+{
+  "createdAt": "2025-09-15T07:18:39.784Z",
+  "updatedAt": "2025-09-15T07:55:57.579Z",
+  "id": "dRXsQCE72G2v6e3A",
+  "name": "Upload videos to Youtube",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        96
+      ],
+      "id": "ea29d9dd-9cf8-4dba-9df1-10d023df73d7",
+      "name": "When Executed by Another Workflow",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "13W-swlOmFzZlqa4VOftydy8TbGLpRkxE8rJgsJE0070",
+          "mode": "list",
+          "cachedResultName": "Life Unfolded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13W-swlOmFzZlqa4VOftydy8TbGLpRkxE8rJgsJE0070/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13W-swlOmFzZlqa4VOftydy8TbGLpRkxE8rJgsJE0070/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        -224
+      ],
+      "id": "733724bc-be9e-48a3-afc1-9819602e9bd7",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -224
+      ],
+      "id": "d51d207b-06b8-47b7-b5b2-608e77381f56",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -224
+      ],
+      "id": "18a1a9ab-8f10-4425-8cfd-b19228511f4d",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "565537f2-da85-40bf-b6cd-9650ffe49730",
+              "leftValue": "={{ $json['Job Status'] }}",
+              "rightValue": "Completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ed7331d6-538c-441c-b2b5-bf1f4dfa125f",
+              "leftValue": "={{ $json['Video Link'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        -224
+      ],
+      "id": "85d32ba9-6396-4935-a638-e2648084fa27",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Video Link'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        -224
+      ],
+      "id": "9da66c74-5b81-4820-a1f9-ace0c025a087",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Limit').item.json['Video Title'] }}",
+        "regionCode": "PK",
+        "categoryId": "27",
+        "options": {
+          "defaultLanguage": "am",
+          "description": "={{ $('Limit').item.json.Description }}",
+          "notifySubscribers": true,
+          "privacyStatus": "unlisted",
+          "publishAt": "2025-09-16T02:00:00",
+          "selfDeclaredMadeForKids": false
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -128
+      ],
+      "id": "936ffb8f-51c1-42d4-8cb7-295cee2539a9",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "49HFQhdRKKO2PrLr",
+          "name": "Life Unfolded"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json['Video Title'] }}",
+        "regionCode": "PK",
+        "categoryId": "27",
+        "options": {
+          "description": "={{ $json.Description }}",
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -320
+      ],
+      "id": "1dba2ca9-1e97-448c-b9e2-62297fd3361b",
+      "name": "Upload a video1",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "49HFQhdRKKO2PrLr",
+          "name": "Life Unfolded"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Upload a video1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a video1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b3cf246b-4b46-4578-9324-1b0643c57d23",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-15T07:18:39.784Z",
+      "updatedAt": "2025-09-15T07:18:39.784Z",
+      "role": "workflow:owner",
+      "workflowId": "dRXsQCE72G2v6e3A",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": []
+}
