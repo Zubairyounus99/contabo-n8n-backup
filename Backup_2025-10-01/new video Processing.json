@@ -1,0 +1,376 @@
+{
+  "createdAt": "2025-09-12T02:57:36.620Z",
+  "updatedAt": "2025-09-19T12:31:08.778Z",
+  "id": "HVZnoICafB9m0uLD",
+  "name": "new video Processing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -96
+      ],
+      "id": "592a6d4f-d06a-42f5-b810-db24de519a58",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb4a1ef4-9a0a-4b82-902c-11bbf618b836",
+              "name": "Title",
+              "value": "={{ $json.Key }}",
+              "type": "string"
+            },
+            {
+              "id": "a2ed2d73-09aa-4ab5-9d19-73ba7d3257f1",
+              "name": "video_url",
+              "value": "=http://173.212.233.128:9000/life-unfolded/{{ encodeURIComponent($json.Key) }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -96
+      ],
+      "id": "66982084-e6e2-4c23-b11a-f1f76553a608",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081/v1/media/convert/mp3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"media_url\":\"{{ $json.video_url }}\",\n    \"bitrate\": \"256k\",\n    \"sample_rate\": 44100,\n    \"id\": \"five\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "d285b32c-f9c3-457d-8c9c-a1ded81291da",
+      "name": "Convert MP3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "bucketName": "life-unfolded",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -96
+      ],
+      "id": "9dabdbe2-ef85-4175-b273-ce0c36eb087f",
+      "name": "Get many files",
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -96
+      ],
+      "id": "777a27f2-f694-429f-a6b0-1e08b8d8c600",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        224
+      ],
+      "id": "40cab084-c2db-4130-8f45-4042e259d685",
+      "name": "When chat message received",
+      "webhookId": "52782b99-bcfb-4ab4-9afd-784dd2402c60"
+    },
+    {
+      "parameters": {
+        "url": "https://tts.ztechai.us:11434/v1/chat/completion",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\",\n  \"Authorization\": \"Bearer sk-4a7b85dce44749cc9ee5a56d33b2ebf9\"\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"deepseek-coder:6.7b\",\n  \"messages\": [\n    {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n    {\"role\": \"user\", \"content\": \"Explain recursion with an example.\"}\n  ]\n}\n",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        224
+      ],
+      "id": "0b0faf09-5793-406c-b400-3704dc344578",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081//v1/ffmpeg/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": [\n    {\n      \"file_url\": \"http://173.212.233.128:9000/nca-toolkit/0006feba-36ba-48c8-afe9-8adba32dd74b_output_0.mp4\"\n    },\n    {\n      \"file_url\": \"http://173.212.233.128:9000/life-unfolded/Minimalist%20Red%20White%20Subscribe%20Button%20Animation%20Video.mp4\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:v]colorkey=0xFFFFFF:0.3:0.1[ckout];[ckout]scale=250:150[logo];[0:v][logo]overlay=W-w-20:20\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        { \"option\": \"-map\", \"argument\": \"0:a\" },\n        { \"option\": \"-c:v\", \"argument\": \"libx264\" },\n        { \"option\": \"-c:a\", \"argument\": \"aac\" }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"filesize\": true,\n    \"duration\": true,\n    \"bitrate\": true\n  },\n  \"id\": \"subscribe-overlay-no-bg\"\n}\n",
+        "options": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        576
+      ],
+      "id": "f80f4d7e-9005-485b-9420-f2871e9fb60a",
+      "name": "add subscribe",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8081//v1/ffmpeg/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": [\n    {\n      \"file_url\": \"http://173.212.233.128:9000/nca-toolkit/786da86e-15b8-446a-8a07-087a1ae90e6c_split_1.mp4\"\n    },\n    {\n      \"file_url\": \"http://173.212.233.128:9000/life-unfolded/Minimalist%20Red%20White%20Subscribe%20Button%20Animation%20Video.mp4\",\n      \"options\": [\n        { \"option\": \"-stream_loop\", \"argument\": \"-1\" }\n      ]\n    },\n    {\n      \"file_url\": \"http://173.212.233.128:9000/life-unfolded/Life%20Unfolded%20Logo-without%20background-cropped.png\"\n    }\n  ],\n  \"filters\": [\n    {\n      \"filter\": \"[1:v]colorkey=0xFFFFFF:0.3:0.1[ckout];[ckout]scale=250:150[subscribe];[2:v]scale=200:200,format=rgba,colorchannelmixer=aa=0.5[logo];[0:v][subscribe]overlay=W-w-20:20:shortest=1[tmp];[tmp][logo]overlay=50:50[outv]\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"options\": [\n        { \"option\": \"-map\", \"argument\": \"[outv]\" },\n        { \"option\": \"-map\", \"argument\": \"0:a\" },\n        { \"option\": \"-c:v\", \"argument\": \"libx264\" },\n        { \"option\": \"-c:a\", \"argument\": \"aac\" }\n      ]\n    }\n  ],\n  \"metadata\": {\n    \"filesize\": true,\n    \"duration\": true,\n    \"bitrate\": true\n  },\n  \"id\": \"subscribe-logo-overlay-loop\"\n}\n",
+        "options": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        544
+      ],
+      "id": "e7c30c77-3e7b-4847-89a2-babebd9b6c81",
+      "name": "merge nodes",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fd6a255-eb7a-4ef9-b415-25405dc03c57",
+              "name": "json",
+              "value": "=[\n{\n\"videos\": \n[\n\"http://173.212.233.128:9000/nca-toolkit/e033b955-c7c6-4fd6-8547-0fbc8c82da2a_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/3837867c-4d1c-440e-b88b-79f98484112a_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/0d60f36b-585a-47ae-822e-0a6e367b1f6b_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/3cb895a2-7f29-4f2b-8b2b-11e1faabe993_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/47d50f45-3695-43c0-9d9c-64502faf6eed_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/dbb913f0-c0f8-4457-a071-17e67efeb467_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/3cc193aa-c8cf-47d2-a475-ec9f3de633b4_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/93fd0d7b-c138-4354-b5fe-04bc6f0627de_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/fc90611f-ba60-47c6-b537-3dba40307adb_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/908374a8-ef10-4902-a036-4ef7174f73cb_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/221e997e-5750-4f19-bf4c-dfeb92a9e15c_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/a32eeb74-445d-4036-9683-1897db260f14_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/6ce7c0e8-44df-49f2-aa0f-e8ce8c51b186_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/1842dec1-ebb5-4120-a72b-878ae63e25d6_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/34fdbdd3-3ba9-44c3-a58d-417b0f3598b9_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/187ea66c-e7f5-456b-96ac-b6bebc2ff65e_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/ff9925d0-ab00-4126-abbd-54707d59e864_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/e3d6cf19-f301-4e9d-928e-0d82b2ef5b02_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/6d462d51-cb81-4442-8045-b63601159f21_output_0.mp4\",\n\"http://173.212.233.128:9000/nca-toolkit/32fa7e11-17b1-43aa-b045-eb879cbc424e_output_0.mp4\"\n]\n}\n]\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        192
+      ],
+      "id": "dd7ecaf2-8eec-40aa-a9d9-b808ac062d39",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get array of URLs from previous node\nconst urls = items[0].json.videos;\n\n// Transform each URL into { video_url: \"<url>\" }\nconst wrapped = urls.map(url => ({ video_url: url }));\n\n// Return in the correct API format\nreturn [\n  {\n    json: {\n      video_urls: wrapped,\n      id: \"concat-job-001\"   // you can make this dynamic if you want\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        64
+      ],
+      "id": "ad8e6f2f-1184-4ac8-b4e0-01d7f2600953",
+      "name": "Create Array"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://173.212.233.128:8081/v1/video/concatenate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 900000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        192
+      ],
+      "id": "719bd298-ed03-47c6-a149-02f6658ebdcc",
+      "name": "Video Concatinate",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "maxTries": 2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert MP3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many files": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert MP3": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Video Concatinate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b312578b-4d6a-47f3-8ec5-e1f34936fbcc",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-12T02:57:36.620Z",
+      "updatedAt": "2025-09-12T02:57:36.620Z",
+      "role": "workflow:owner",
+      "workflowId": "HVZnoICafB9m0uLD",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": []
+}
