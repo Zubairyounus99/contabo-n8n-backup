@@ -1,0 +1,608 @@
+{
+  "createdAt": "2025-09-09T04:59:23.559Z",
+  "updatedAt": "2025-09-11T11:03:56.907Z",
+  "id": "2a8MqbYT2CwoTLw7",
+  "name": "Long Script Generator",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        1360
+      ],
+      "id": "1eba2bbe-ee33-4006-9c0e-ba9ee2fac2b1",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=main Title:{{ $json['Series Title'] }}\nVideo Title:{{ $json['Video Title'] }}\nNext Part Title: {{ $json['Next Part Title'] }}\nPart No:{{ $json['Part No'] }}\nLength of Video:{{ $json['Length of Video'] }}\nLength of Each Section:{{ $json['Length of Each Section'] }}",
+        "options": {
+          "systemMessage": "=You are the **Middle AI Script Manager Agent** for the YouTube channel **“Time Flipped.”**  \nYour role is to receive video instructions from the Master Agent, divide the script into sections, delegate them to sub-agents, and merge all outputs into one final polished script.  \n\n---\n\n## ROLE:\n- You are a **script project manager**.  \n- You **do not write full scripts yourself**.  \n- You **split the workload**, call the right sub-agents, and merge their sections.  \n\n---\n\n## INPUTS YOU WILL RECEIVE:\n- Playlist Title (main theme)  \n- Video Title (focus topic)  \n- Video Duration → {{ $json[\"Length of Video\"] }}  \n- Next Video Title (or \"NO\" if it’s the last one)  \n\n---\n\n## SCRIPT LENGTH RULE:\n- Generate **180 words per minute**.  \n- Example: 10 minutes = ~1800 words.  \n- Split into **sections of 300–350 words**.  \n- Number of sub-agents = (total words ÷ 325), max 8.  \n\n---\n\n## TOOLS:\nYou have access to the following tools to complete your task:\n\n1. **Sample Transcriptions:**  \n   - Use to retrieve **style references** only.  \n   - Do NOT copy. Only use format, narration tone, pacing, and posture.  \n\n2. **Ai agent1** → writes **first section** (300–350 words).  \n3. **Ai agent2** → writes **second section** (continuation).  \n4. **Ai agent3** → writes **third section** (continuation).  \n5. **Ai agent4** → writes **fourth section**.  \n6. **Ai agent5** → writes **fifth section**.  \n7. **Ai agent6** → writes **sixth section**.  \n8. **Ai agent7** → writes **seventh section**.  \n9. **Ai agent8** → writes **eighth section**.  \n\n---\n\n## PROCESS:\n1. **Calculate Word Target:**  \n   - Total words = Duration × 180.  \n   - Split into 300–350 word sections.  \n\n2. **Assign Work:**  \n   - Send each section request (with context + continuation instructions) to the correct Ai agent tool.  \n   - Example: first 350 words → Ai agent1, next 350 words → Ai agent2, etc.  \n\n3. **Ensure Continuity:**  \n   - When sending to Ai agent2 onward, always pass the **previous agent’s output** as context.  \n   - Instruct each agent to **continue smoothly** without restarting.  \n\n4. **Merge Results:**  \n   - Collect all outputs from Ai agent1…Ai agentN.  \n   - Merge in correct sequence.  \n   - Ensure the whole script flows as **one narration**, not multiple disjointed parts.  \n\n---\n\n## STYLE & RULES:\n- Style must imitate **Life_Laps-inspired storytelling**: curious, mysterious, reflective, engaging.  \n- Language must be **clear, simple, relatable**. Avoid complex jargon.  \n- Sections must include labeled parts (Hook, Narration, Motivational Layer, Engagement, Outro).  \n- If \"Next Video Title\" is provided → end with **curiosity bridge**.  \n- If \"Next Video Title = NO\" → end with **final inspirational closure**.  \n\n---\n\n## FINAL OUTPUT:\n- Return **one unified script** (not separated by agents).  \n- Word count must equal target (±5%).  \n- Flow must be seamless across all sections.  \n- Keep tone consistent as if written by one person.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2832,
+        560
+      ],
+      "id": "a557c3f9-f634-46dd-a068-bc2afb0e8fb2",
+      "name": "Script Writer"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['Series Title'] }}",
+        "tableName": "Time_Flipped_Automatio_Chat",
+        "contextWindowLength": 200
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2704,
+        224
+      ],
+      "id": "bc768051-76ed-432f-9430-cdcd8d37713f",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrive scripts sample for refernce ",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "time-flipped-scripts",
+          "mode": "list",
+          "cachedResultName": "time-flipped-scripts"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -2208,
+        1200
+      ],
+      "id": "f62caf01-64cd-46d1-a2b3-84fb8633fca2",
+      "name": "Sample Transcriptions",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Tzo8ULCdQIZZdu6l",
+          "name": "Time_Flipped"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3600,
+        1008
+      ],
+      "id": "fb81de3e-6059-45ab-915d-b323be6c11d0",
+      "name": "Ai agent1"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3328,
+        1008
+      ],
+      "id": "ac776cc7-324f-4d5b-9912-02e68bc628ed",
+      "name": "Ai agent2"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3056,
+        1008
+      ],
+      "id": "94ddeeca-8d2e-4245-957d-3ffbbede1814",
+      "name": "Ai agent3"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2832,
+        1008
+      ],
+      "id": "7a936083-6d30-4ab6-848d-5894be20498a",
+      "name": "Ai agent4"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2560,
+        1008
+      ],
+      "id": "c85f8857-71c9-4d7b-b572-a28fad12b966",
+      "name": "Ai agent5"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3600,
+        1392
+      ],
+      "id": "0fc85919-189f-49a4-a988-d2d8207923e1",
+      "name": "Ai agent6"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3344,
+        1392
+      ],
+      "id": "0f769d67-f8d6-4df6-aac1-8d85cfc6246e",
+      "name": "Ai agent7"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -3088,
+        1392
+      ],
+      "id": "c985a109-4cc6-4c74-a3ee-672318318cc4",
+      "name": "Ai agent8"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2832,
+        1392
+      ],
+      "id": "1948cf68-5117-4cb1-be79-bc95af0337d0",
+      "name": "Ai agent9"
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('System_Message', ``, 'string') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -2560,
+        1392
+      ],
+      "id": "d795b418-aaf0-4d69-b90b-486831525e94",
+      "name": "Ai agent10"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -3808,
+        1232
+      ],
+      "id": "8bf00e12-03bf-463b-aebf-e9af4ae79845",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3120,
+        576
+      ],
+      "id": "7da48882-7636-4069-91fc-e140dbc7207a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2800,
+        256
+      ],
+      "id": "244d4261-5969-4e13-92db-d65cedc56b2b",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tgXiWw7PJwx6ZnyD",
+          "name": "Gemini-2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Sample Transcriptions",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script Writer": {
+      "main": [
+        []
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample Transcriptions": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent5",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent10",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent9",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent4",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent3",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent2",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent1",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent6",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent7",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ai agent8",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent5": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent6": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent7": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent8": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent9": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ai agent10": {
+      "ai_tool": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ai agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent5",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent6",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent7",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent8",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent9",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Ai agent10",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Script Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f8bdb3ac-8535-4faf-b02a-dd4c6b188538",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-09T04:59:23.559Z",
+      "updatedAt": "2025-09-09T04:59:23.559Z",
+      "role": "workflow:owner",
+      "workflowId": "2a8MqbYT2CwoTLw7",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": [
+    {
+      "createdAt": "2025-09-08T06:06:20.811Z",
+      "updatedAt": "2025-09-08T06:06:20.811Z",
+      "id": "RNWde51of0nnQzPD",
+      "name": "Video Automation"
+    }
+  ]
+}
