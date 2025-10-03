@@ -1,0 +1,482 @@
+{
+  "createdAt": "2025-10-02T05:56:16.029Z",
+  "updatedAt": "2025-10-02T10:35:45.775Z",
+  "id": "H2FE0bihyr2Byxk2",
+  "name": "Jessica-Receptionist",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "14b0b27b-b6e9-4434-b896-baf11abf8a0c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "23e3bf34-e128-47da-a311-b4fbbd6bd7a3",
+      "name": "Webhook",
+      "webhookId": "14b0b27b-b6e9-4434-b896-baf11abf8a0c"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name:{{ $json.body.message.toolCalls[0].function.arguments.Name }}\nEmail: {{ $json.body.message.toolCalls[0].function.arguments.Email }}\nPhone Number: {{ $json.body.message.toolCalls[0].function.arguments['Phone Number'] }}\nBusiness Name: {{ $json.body.message.toolCalls[0].function.arguments['Business Name'] }}\n{{ $workflow.name }}\nPreferred Booking time: {{ $json.body.message.toolCalls[0].function.arguments['Booking Time'] }}\nCurrent time is {{ $now }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are Ava’s Scheduling Assistant for ZTechAI.  \nYou do not speak to the caller directly. Instead, you process structured data sent from Vapi (caller details and requested action).  \n\nYour role:  \n- Manage appointments in the Google Calendar using the provided tools.  \n- Always follow instructions and maintain data integrity.  \n- Never overwrite or double-book unless explicitly told (e.g., reschedule).  \n- Return only clear, structured responses so Vapi can read them back naturally.  \n\n### Workflow Rules:\n1. Each appointment duration = 30 minutes.  \n   → Always calculate and set the correct end time (start time + 30 min).  \n\n2. Before booking → always check availability.  \n   - If slot free → book the appointment.  \n   - If slot busy → return an alternative time (next available slot).  \n\n3. Updating/Rescheduling → delete the old booking and create the new one.  \n   - Confirm with details of the new appointment.  \n\n4. Cancel → remove the event from the calendar.  \n   - Confirm cancellation with caller details.  \n\n5. Check availability → respond with whether the requested slot is free or busy.  \n\n### Tools:\n- **Book Appointment** → Schedule a new event.  \n- **Check Availability** → Verify if requested time is free.  \n- **Reschedule** → Delete old event and create a new one.  \n- **Cancel** → Delete existing event.  \n- **Calculator** → Add 30 minutes to start time when needed.  \n\n### Response Format:\nAlways respond with a JSON object containing:  \n- `status`: \"success\" or \"failed\"  \n- `action`: the action performed (BOOK, RESCHEDULE, CANCEL, CHECK_AVAILABILITY)  \n- `details`: human-friendly explanation for the caller  \n- `appointment`: { \"name\": \"\", \"email\": \"\", \"phone_number\": \"\", \"business_name\": \"\", \"start_time\": \"\", \"end_time\": \"\" } (only for BOOK or RESCHEDULE actions)\n\n### Example Responses:\n\n✅ Booking:\n```json\n{\n  \"status\": \"success\",\n  \"action\": \"BOOK\",\n  \"details\": \"Your consultation is confirmed on Oct 5th at 3:00 PM for 30 minutes.\",\n  \"appointment\": {\n    \"name\": \"John Smith\",\n    \"email\": \"john@example.com\",\n    \"phone_number\": \"5551234567\",\n    \"business_name\": \"Smith Auto Repairs\",\n    \"start_time\": \"2025-10-05T15:00:00\",\n    \"end_time\": \"2025-10-05T15:30:00\"\n  }\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        -128
+      ],
+      "id": "2c6f6cf7-71de-4ccc-92f7-f805501491c4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-nano-9b-v2:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        624,
+        96
+      ],
+      "id": "2d417409-3405-4038-a3ec-6604d959bca4",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $workflow.name }}",
+        "tableName": "ZtechAIReceptionist"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        96
+      ],
+      "id": "6ba5b19e-277c-4172-bc20-5a9cc4b03dce",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "zubairyounous99@gmail.com",
+          "mode": "list",
+          "cachedResultName": "zubairyounous99@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        96
+      ],
+      "id": "76bc8790-165e-47e5-8c4c-6c12dc580dfd",
+      "name": "Book Appointment",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AB2JJj1zdzvHs9aw",
+          "name": "calender-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "zubairyounous99@gmail.com",
+          "mode": "list",
+          "cachedResultName": "zubairyounous99@gmail.com"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        96
+      ],
+      "id": "2d34f8ef-8abe-41eb-86ce-18465be760ef",
+      "name": "Check availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AB2JJj1zdzvHs9aw",
+          "name": "calender-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "zubairyounous99@gmail.com",
+          "mode": "list",
+          "cachedResultName": "zubairyounous99@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        96
+      ],
+      "id": "30b67d80-afcc-4439-ac66-30d1f9393d70",
+      "name": "Cancel",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AB2JJj1zdzvHs9aw",
+          "name": "calender-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "zubairyounous99@gmail.com",
+          "mode": "list",
+          "cachedResultName": "zubairyounous99@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        96
+      ],
+      "id": "5f4f0bef-f36d-47af-b6ad-b2f93588b891",
+      "name": "Update",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AB2JJj1zdzvHs9aw",
+          "name": "calender-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "zubairyounous99@gmail.com",
+          "mode": "list",
+          "cachedResultName": "zubairyounous99@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1392,
+        96
+      ],
+      "id": "6a0eaeb3-2973-425b-a0a9-f52af8ef9f55",
+      "name": "Reschedule",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "AB2JJj1zdzvHs9aw",
+          "name": "calender-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1856,
+        -128
+      ],
+      "id": "de285d4d-6faa-4d3f-9f8d-596f23b14d04",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        96
+      ],
+      "id": "635f9e87-e838-4bad-ae57-0841cbba1a0c",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -224
+      ],
+      "id": "87ee90d0-8a02-4e1d-8502-fa33f53bff72",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b69094b-de20-4f70-b492-58c06470b5d9",
+              "name": "Name",
+              "value": "Zubair Younus",
+              "type": "string"
+            },
+            {
+              "id": "c078e52f-c248-40ec-bd96-f3c9d104cbdb",
+              "name": "Email",
+              "value": "zubairyounus99@gmail.com",
+              "type": "string"
+            },
+            {
+              "id": "6e53f12d-c383-4407-9842-5c4b9ac46cfb",
+              "name": "Phone Number",
+              "value": "03086383374",
+              "type": "string"
+            },
+            {
+              "id": "3007d452-e8e8-4867-ad8d-72745779fb66",
+              "name": "Business Name",
+              "value": "Open Dental",
+              "type": "string"
+            },
+            {
+              "id": "feb1bd82-dbd9-4fd0-9a31-46ebf985f384",
+              "name": "Preferred Time",
+              "value": "9 am tomorrow",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -224
+      ],
+      "id": "3d201eef-7af5-48a0-967e-cf55b449f419",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\"success\", \"failed\"],\n      \"description\": \"Final result status of the action.\"\n    },\n    \"action\": {\n      \"type\": \"string\",\n      \"enum\": [\"BOOK\", \"RESCHEDULE\", \"CANCEL\", \"CHECK_AVAILABILITY\"],\n      \"description\": \"The calendar action performed.\"\n    },\n    \"details\": {\n      \"type\": \"string\",\n      \"description\": \"Human-friendly summary to read back to the caller.\"\n    },\n    \"appointment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"name\": { \"type\": \"string\" },\n        \"email\": { \"type\": \"string\" },\n        \"phone_number\": { \"type\": \"string\" },\n        \"business_name\": { \"type\": \"string\" },\n        \"start_time\": { \"type\": \"string\", \"description\": \"ISO datetime of appointment start.\" },\n        \"end_time\": { \"type\": \"string\", \"description\": \"ISO datetime of appointment end.\" }\n      },\n      \"required\": [\"name\", \"start_time\", \"end_time\"]\n    }\n  },\n  \"required\": [\"status\", \"action\", \"details\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1648,
+        96
+      ],
+      "id": "9923dc41-809f-4fc9-852b-e124ab7f93a7",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reschedule": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "151a1542-a0de-49f3-b94f-bc94b6d67363",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-10-02T05:56:16.029Z",
+      "updatedAt": "2025-10-02T05:56:16.029Z",
+      "role": "workflow:owner",
+      "workflowId": "H2FE0bihyr2Byxk2",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "tags": []
+}
