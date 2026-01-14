@@ -1,0 +1,1102 @@
+{
+  "updatedAt": "2026-01-06T13:55:38.348Z",
+  "createdAt": "2026-01-03T20:05:07.787Z",
+  "id": "NV6ymeq4eipsk64f",
+  "name": "Send Drafted Email",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -96
+      ],
+      "id": "3c572024-5fef-40ec-b747-a1c018f59e07",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "968feaef-e435-4bc5-838f-42acc6f206cb",
+              "leftValue": "={{ $json['Sent Email staus'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        352,
+        -96
+      ],
+      "id": "f0135f62-c147-4c57-aab2-c705f1c35d54",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $json['Draft ID'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        -192
+      ],
+      "id": "72487881-3f98-4d4b-ab17-26690c886a56",
+      "name": "Get a draft",
+      "webhookId": "56880016-4625-4007-9ed7-df1d982732fc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website": "={{ $('Filter').item.json.Website }}",
+            "Mail Status": "SENT"
+          },
+          "matchingColumns": [
+            "Website"
+          ],
+          "schema": [
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mail Status",
+              "displayName": "Mail Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Draft ID",
+              "displayName": "Draft ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft Email Approval",
+              "displayName": "Draft Email Approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Modification Instructions",
+              "displayName": "Modification Instructions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "HTML Email Body",
+              "displayName": "HTML Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        -192
+      ],
+      "id": "51259648-9e30-477a-b185-2e60803f4b36",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "delete",
+        "messageId": "={{ $('Get a draft').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        -192
+      ],
+      "id": "4158fda1-7444-4411-87b9-10d9af8f1df9",
+      "name": "Delete a draft",
+      "webhookId": "82d3f219-df8f-443a-b3e6-cee803a81629",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        -192
+      ],
+      "id": "6dd95d55-3379-4606-b550-9e6e8e885e15",
+      "name": "Wait",
+      "webhookId": "ba63cd79-9298-401a-8f2c-147c38a07677"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "ea7a0d85-1d60-4209-b9c1-b10ecf829873",
+      "name": "Limit to 1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Draft Email Approval'] }}",
+                    "rightValue": "OK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d5708913-fc34-4014-87f0-15e98532854f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OK"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "235c0f6e-52e4-4637-ba9b-da9207dab870",
+                    "leftValue": "={{ $json['Draft Email Approval'] }}",
+                    "rightValue": "modified",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Modified"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        -96
+      ],
+      "id": "04719d51-7a93-4275-9dfc-ce244769b134",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@ztechai.us",
+        "toEmail": "zubairyounus99@gmail.com",
+        "subject": "={{ $json.headers.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "3cd90890-6311-45d3-83e3-bb1b3fcba9c9",
+      "name": "Send OK email",
+      "webhookId": "d3577073-946a-41ab-a06a-3fdb566979d4",
+      "credentials": {
+        "smtp": {
+          "id": "HYXscACCvF3YTkhc",
+          "name": "zubairyounOus Mail Box"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Draft Email Approval",
+              "lookupValue": "OK"
+            },
+            {
+              "lookupColumn": "Draft Email Approval",
+              "lookupValue": "modified"
+            }
+          ]
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        -96
+      ],
+      "id": "f899c170-5c4a-4667-8396-88d3bbb66246",
+      "name": "Get Drafted Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -192
+      ],
+      "id": "75f63915-f4cc-4da2-8f93-d48e7c316e06",
+      "name": "Limit to "
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $json['Draft ID'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "16b3e887-8939-4d21-a734-01efc5271e69",
+      "name": "Get a draft2",
+      "webhookId": "56880016-4625-4007-9ed7-df1d982732fc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@ztechai.us",
+        "toEmail": "zubairyounus99@gmail.com",
+        "subject": "={{ $json.headers.subject }}",
+        "html": "={{ $('Limit to 1').item.json['HTML Email Body'] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "68ea1fbf-6510-4c0a-b02b-2bb5bd42ab91",
+      "name": "Send Modified Email",
+      "webhookId": "d3577073-946a-41ab-a06a-3fdb566979d4",
+      "credentials": {
+        "smtp": {
+          "id": "HYXscACCvF3YTkhc",
+          "name": "zubairyounOus Mail Box"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        0
+      ],
+      "id": "4028935d-6b34-4b3f-97e9-b2c3ce226373",
+      "name": "Wait1",
+      "webhookId": "ba63cd79-9298-401a-8f2c-147c38a07677"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "delete",
+        "messageId": "={{ $('Get a draft2').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        0
+      ],
+      "id": "65a8b7a0-431e-4301-a3a9-8d9f3af4d462",
+      "name": "Delete a draft1",
+      "webhookId": "82d3f219-df8f-443a-b3e6-cee803a81629",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website": "={{ $('Filter').item.json.Website }}",
+            "Mail Status": "SENT"
+          },
+          "matchingColumns": [
+            "Website"
+          ],
+          "schema": [
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mail Status",
+              "displayName": "Mail Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Draft ID",
+              "displayName": "Draft ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft Email Approval",
+              "displayName": "Draft Email Approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Modification Instructions",
+              "displayName": "Modification Instructions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "HTML Email Body",
+              "displayName": "HTML Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "dc337243-abba-4a77-87a8-8a9c172831ed",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "015fe6e0-8cea-4b0c-9f57-08d98f9a1ad8",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        -912
+      ],
+      "id": "0d93bb69-bfe8-4061-b604-874f7d21eb5a",
+      "name": "Webhook",
+      "webhookId": "015fe6e0-8cea-4b0c-9f57-08d98f9a1ad8"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2016,
+        -592
+      ],
+      "id": "3593c04e-16bf-4250-8f93-bcb2c3ac0e14",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49dff12d-9f77-48a3-a6fc-1181d2b6750d",
+              "name": "Draft ststus",
+              "value": "78xaXCzUBel19ptchaVIIkOfUUSiVZwAW7RhzBt3",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        -912
+      ],
+      "id": "0f7d9263-a4b9-4c75-a266-480ce333882d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "__CUSTOM_API_CALL__"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1456,
+        -704
+      ],
+      "id": "1d23d9ed-ed10-45e9-b5f6-14428f4cb3fc",
+      "name": "__CUSTOM_API_CALL__ row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "EU5QH5LtLshWxAdj",
+          "name": "db for ZTECHAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://db.ztechai.us/api/v2/tables/m43oc6qhtv52e6o/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "offset",
+              "value": "0"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            },
+            {
+              "name": "where"
+            },
+            {
+              "name": "viewId",
+              "value": "vwdbgspteso168p9"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "={{ $json['Draft ststus'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "Draft ID",
+              "value": "OKAY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        960,
+        -912
+      ],
+      "id": "0ed1cebc-368c-489d-bd75-329ee68190c9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -912
+      ],
+      "id": "ce4aac91-a93f-432c-a221-e63ac03e2669",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "=https://db.ztechai.us/api/v2/tables/m43oc6qhtv52e6o/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "200"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "={{ $('Edit Fields').item.json['Draft ststus'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1168,
+        -912
+      ],
+      "id": "6a816da6-e243-4499-8a7f-c0fdf5a0efa2",
+      "name": "HTTP Request1"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Drafted Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a draft": {
+      "main": [
+        [
+          {
+            "node": "Send OK email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a draft": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Delete a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Limit to 1": {
+      "main": [
+        [
+          {
+            "node": "Get a draft2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Limit to ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit to 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send OK email": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Drafted Rows": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to ": {
+      "main": [
+        [
+          {
+            "node": "Get a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a draft2": {
+      "main": [
+        [
+          {
+            "node": "Send Modified Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Modified Email": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Delete a draft1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a draft1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "__CUSTOM_API_CALL__ row": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 10
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+      "sheetId": 725107913,
+      "lastRevision": 2187,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY&revision=2187&exportFormat=xlsx"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.ztechai.us",
+            "user-agent": "axios/1.12.2",
+            "content-length": "764",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.17.0.1",
+            "x-forwarded-host": "n8n.ztechai.us",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "85c63185714e",
+            "x-real-ip": "172.17.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "type": "records.after.update",
+            "id": "352f14d6-c08e-40f7-8bb1-a59037f1d877",
+            "base_id": "pz0zuvdo00ea87j",
+            "version": "v3",
+            "data": {
+              "table_id": "m43oc6qhtv52e6o",
+              "table_name": "Mail status",
+              "previous_rows": [
+                {
+                  "Id": 2,
+                  "CreatedAt": "2026-01-04 21:24:34+00:00",
+                  "UpdatedAt": null,
+                  "Website": "https://www.newyorkdentaloffice.com/",
+                  "Email": null,
+                  "Draft Status": "Pending",
+                  "Draft ID": null,
+                  "Sent Email staus": null,
+                  "Draft Email Approval": null,
+                  "Text Email Body": null,
+                  "HTML Email Body": null
+                }
+              ],
+              "rows": [
+                {
+                  "Id": 2,
+                  "CreatedAt": "2026-01-04 21:24:34+00:00",
+                  "UpdatedAt": "2026-01-06 13:13:48+00:00",
+                  "Website": "https://www.newyorkdentaloffice.com/",
+                  "Email": null,
+                  "Draft Status": "SENT",
+                  "Draft ID": null,
+                  "Sent Email staus": null,
+                  "Draft Email Approval": null,
+                  "Text Email Body": null,
+                  "HTML Email Body": null
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://n8n.ztechai.us/webhook-test/015fe6e0-8cea-4b0c-9f57-08d98f9a1ad8",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "5e4ee725-d256-4837-a95f-a1a2e7a2221d",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-03T20:05:07.787Z",
+      "createdAt": "2026-01-03T20:05:07.787Z",
+      "role": "workflow:owner",
+      "workflowId": "NV6ymeq4eipsk64f",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
