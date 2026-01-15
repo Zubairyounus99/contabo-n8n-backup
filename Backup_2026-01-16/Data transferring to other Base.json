@@ -1,0 +1,530 @@
+{
+  "updatedAt": "2026-01-15T21:58:06.338Z",
+  "createdAt": "2026-01-15T20:45:41.798Z",
+  "id": "sEQQXJKSfT8HiiblXoxII",
+  "name": "Data transferring to other Base",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ddd488d4-9927-4c48-b353-ed8096e2a920",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "2eafd6d7-7bb4-4d8f-a360-70cb4927c5f4",
+      "name": "Webhook",
+      "webhookId": "ddd488d4-9927-4c48-b353-ed8096e2a920"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "m43oc6qhtv52e6o",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $json.body.data.rows[0].Id }}"
+            },
+            {
+              "fieldName": "Website",
+              "fieldValue": "={{ $json.body.data.rows[0].Website }}"
+            },
+            {
+              "fieldName": "Email",
+              "fieldValue": "={{ $json.body.data.previous_rows[0].Email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -256
+      ],
+      "id": "762fd164-6782-41b9-a17d-dc0942352362",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ca1c4483-7ff5-416c-b8d4-348c3ba3df81",
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "records.after.insert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Create"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "=records.after.update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2cbfa6c1-a613-424d-8f4a-f3443388bc57"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2f23d2c3-4878-46e3-9e1e-2e2b24840d36",
+                    "leftValue": "={{ $json.body.type }}",
+                    "rightValue": "records.after.delete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Delete"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -80
+      ],
+      "id": "3cbaf3ff-ba3f-4aa8-ae42-6e2f36e64d37",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "m43oc6qhtv52e6o",
+        "id": "={{ $json.body.data.rows[0].Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        512,
+        128
+      ],
+      "id": "971a772b-5049-4d73-af92-56ce2bc70eb5",
+      "name": "Delete a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "m43oc6qhtv52e6o",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $json.body.data.rows[0].Id }}"
+            },
+            {
+              "fieldName": "Website",
+              "fieldValue": "={{ $json.body.data.rows[0].Website }}"
+            },
+            {
+              "fieldName": "Email"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        608,
+        -64
+      ],
+      "id": "9bafa946-11ed-4529-b614-2d9673076141",
+      "name": "Update a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "60fe5605-a559-4351-8bbd-77a3a4431123",
+  "activeVersionId": "60fe5605-a559-4351-8bbd-77a3a4431123",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-15T20:45:41.798Z",
+      "createdAt": "2026-01-15T20:45:41.798Z",
+      "role": "workflow:owner",
+      "workflowId": "sEQQXJKSfT8HiiblXoxII",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-15T21:58:08.727Z",
+    "createdAt": "2026-01-15T21:56:12.026Z",
+    "versionId": "60fe5605-a559-4351-8bbd-77a3a4431123",
+    "workflowId": "sEQQXJKSfT8HiiblXoxII",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "ddd488d4-9927-4c48-b353-ed8096e2a920",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          -64
+        ],
+        "id": "2eafd6d7-7bb4-4d8f-a360-70cb4927c5f4",
+        "name": "Webhook",
+        "webhookId": "ddd488d4-9927-4c48-b353-ed8096e2a920"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "create",
+          "projectId": "pz0zuvdo00ea87j",
+          "table": "m43oc6qhtv52e6o",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "id",
+                "fieldValue": "={{ $json.body.data.rows[0].Id }}"
+              },
+              {
+                "fieldName": "Website",
+                "fieldValue": "={{ $json.body.data.rows[0].Website }}"
+              },
+              {
+                "fieldName": "Email",
+                "fieldValue": "={{ $json.body.data.previous_rows[0].Email }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          448,
+          -256
+        ],
+        "id": "762fd164-6782-41b9-a17d-dc0942352362",
+        "name": "Create a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "hmlfeKtt9qXmVHJ2",
+            "name": "Nocodb Selfhosted n8n"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "ca1c4483-7ff5-416c-b8d4-348c3ba3df81",
+                      "leftValue": "={{ $json.body.type }}",
+                      "rightValue": "records.after.insert",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Create"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.body.type }}",
+                      "rightValue": "=records.after.update",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "2cbfa6c1-a613-424d-8f4a-f3443388bc57"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "update"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2f23d2c3-4878-46e3-9e1e-2e2b24840d36",
+                      "leftValue": "={{ $json.body.type }}",
+                      "rightValue": "records.after.delete",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Delete"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          224,
+          -80
+        ],
+        "id": "3cbaf3ff-ba3f-4aa8-ae42-6e2f36e64d37",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "delete",
+          "projectId": "pz0zuvdo00ea87j",
+          "table": "m43oc6qhtv52e6o",
+          "id": "={{ $json.body.data.rows[0].Id }}"
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          512,
+          128
+        ],
+        "id": "971a772b-5049-4d73-af92-56ce2bc70eb5",
+        "name": "Delete a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "hmlfeKtt9qXmVHJ2",
+            "name": "Nocodb Selfhosted n8n"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "nocoDbApiToken",
+          "operation": "update",
+          "projectId": "pz0zuvdo00ea87j",
+          "table": "m43oc6qhtv52e6o",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldName": "id",
+                "fieldValue": "={{ $json.body.data.rows[0].Id }}"
+              },
+              {
+                "fieldName": "Website",
+                "fieldValue": "={{ $json.body.data.rows[0].Website }}"
+              },
+              {
+                "fieldName": "Email"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.nocoDb",
+        "typeVersion": 3,
+        "position": [
+          608,
+          -64
+        ],
+        "id": "9bafa946-11ed-4529-b614-2d9673076141",
+        "name": "Update a row",
+        "credentials": {
+          "nocoDbApiToken": {
+            "id": "hmlfeKtt9qXmVHJ2",
+            "name": "Nocodb Selfhosted n8n"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Create a row",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update a row",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Delete a row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Zubair Younus",
+    "name": "Version 60fe5605",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
