@@ -1,0 +1,2894 @@
+{
+  "updatedAt": "2025-09-27T14:12:23.547Z",
+  "createdAt": "2025-09-10T17:30:10.064Z",
+  "id": "KblZaWgyX2Hk0PLt",
+  "name": "Uploading Long Time Flipped",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Time Flipped",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Job Status",
+              "lookupValue": "Completed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -704,
+        112
+      ],
+      "id": "b91a51a0-7d5c-4713-b8dc-2d8bb66535d9",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "807c739f-b4b7-41cb-92bf-7e8271e970ac",
+              "leftValue": "={{ $json['Final Video Link'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7505d681-ea99-40b4-8aa7-d648e561cf5a",
+              "leftValue": "={{ $json['Youtube Upload Status'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -480,
+        112
+      ],
+      "id": "4ccd21bf-b120-44e2-8a85-279035714aac",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        112
+      ],
+      "id": "0d30ae41-26bb-4425-aab2-8483cb195156",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.together.xyz/v1/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell-Free"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $('Basic LLM Chain').item.json.text }}"
+            },
+            {
+              "name": "steps",
+              "value": "={{ 4 }}"
+            },
+            {
+              "name": "n",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "width",
+              "value": "={{ 1280 }}"
+            },
+            {
+              "name": "height",
+              "value": "={{ 720 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        -128
+      ],
+      "id": "f3d10681-e6e8-4f5c-bb19-895f1d896f4c",
+      "name": "Free Images",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "xNZtY56kIowFixlg",
+          "name": "together Ai"
+        },
+        "httpHeaderAuth": {
+          "id": "hBA1Z0mB998wxpr0",
+          "name": "NCA ToolKit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -928,
+        16
+      ],
+      "id": "4a0d70d1-bbbc-45de-a3ea-165bbdb015a3",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['video url'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 1500000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        -128
+      ],
+      "id": "ed743ee6-41c9-4ed4-9c85-95c02eb262cd",
+      "name": "Download File",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8eb75842-7382-4ad9-825b-f072800d02a9",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "={{ $('Limit').item.json['Video Title'] }}",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        32
+      ],
+      "id": "2e9690e7-3e71-4bfd-8f63-51cfd2ef3194",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Limit').item.json['Part No.'] }}|{{ $('Limit').item.json['Video Title'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+          "mode": "list",
+          "cachedResultName": "Final Videos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        480,
+        176
+      ],
+      "id": "14394791-a11a-429c-b59d-1d269b127b26",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.name }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an **Expert YouTube Thumbnail Prompt Generator**.  \n\nYour job is to create a single cinematic thumbnail prompt for an AI image generator (Flux Schnell, Stable Diffusion-like).  \n\n---\n\n### CONTEXT INPUTS YOU WILL RECEIVE:\n- Series Title: {{ $('Limit').item.json['Series Title'] }}\n- Video Title: {{ $('Limit').item.json['Video Title'] }}\n\n---\n\n### THUMBNAIL PROMPT RULES:\n- **Concept:** The thumbnail must reflect the essence, emotion, and vibe of the Series + Video Title.  \n- **Composition:** It can creatively merge or overlay multiple images (e.g., past vs. future, before vs. after, light vs. dark) in one frame.  \n- **Background Scene:** Must visualize the story’s core idea (adventure, mystery, survival, science-fiction, etc.).  \n- **Camera Angle:** Cinematic wide shot, dramatic close-up, or aerial view.  \n- **Lighting:** Neon glow, cosmic flares, or dramatic shadows depending on theme.  \n- **Style:** Ultra-detailed, cinematic, futuristic, or mysterious — matching the channel’s style.  \n- **Colors:** Bold, high-contrast, eye-catching (neon blues, fiery oranges, deep blacks).  \n\n---\n\n### IMPORTANT REMINDERS:\n- Do NOT output explanations, markdown, or extra notes.  \n- Always keep the style **cinematic, mysterious, and engaging**.  \n- Ensure the thumbnail feels like it belongs to the same channel & series.  \n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        416,
+        -224
+      ],
+      "id": "bb674162-6063-46c0-9c47-a684b9b00f99",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek/deepseek-chat-v3.1:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "6b40d437-8816-4b92-90cc-69159d46f3d1",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "52097282-59c7-411a-ad53-a31558b4955d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mfO0dqgKTdN60Ofd",
+          "name": "zubair-1 Paid"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        176
+      ],
+      "id": "595cd61b-c323-47de-99f9-67820f41a7a8",
+      "name": "Wait",
+      "webhookId": "9905deb9-d4bf-46e7-95e2-6d1fd4a9e0a9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fc4fda0-e949-4c1f-a400-6d28b08e5091",
+              "name": "Video Title",
+              "value": "={{ $('Limit').item.json['Video Title'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        256
+      ],
+      "id": "8923875b-860b-4aee-9865-dd23aa544cce",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json['Part No.'] }}|{{ $json['Video Title'] }}",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+            "mode": "list",
+            "cachedResultName": "Final Videos",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        112
+      ],
+      "id": "dacefffd-0141-4bd8-baba-fb8957f05d3f",
+      "name": "Search files and folders",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-chat-v3.1:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        112
+      ],
+      "id": "20c0b089-8711-42a3-9029-2c54d30ce9df",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        112
+      ],
+      "id": "5310d0dd-d8ef-43f3-89be-808b0fdda7bf",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "mfO0dqgKTdN60Ofd",
+          "name": "zubair-1 Paid"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=Thumbnail|{{ $('Limit').item.json['Video Title'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('If1').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        -128
+      ],
+      "id": "5eacddfa-b30d-4393-8fde-999ec3f492e1",
+      "name": "Upload Thumbnail",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "s0OPOxW9bDMLB0mT",
+          "name": "zubair-2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Title:  {{ $('Limit').item.json['Video Title'] }}\nSeries Title: {{ $('Limit').item.json['Series Title'] }}\nEpisode Number:{{ $('Limit').item.json['Part No.'] }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are an expert YouTube SEO content creator. \n  Your task is to write a highly engaging and SEO-optimized YouTube video description.\n\n  Video Information:\n  - Series Title: {{ $('Limit').item.json['Series Title'] }}\n  - Video Title: {{ $('Limit').item.json['Video Title'] }}\n  - Episode Number: {{ $('Limit').item.json['Part No.'] }}\n  Instructions:\n  1. Start with a strong hook (2–3 sentences) to grab attention.\n  2. Naturally include important keywords from the video title and series.\n  3. Provide a short summary of what viewers will learn or experience.\n  4. Add a call-to-action (subscribe, like, comment).\n  5. Include relevant hashtags at the end (3–5 strong tags).\n  6. Series Title and Episode Numbers are just for refence to provide you context. \n  7. Use SEO-Optimized emojis and expressions based on content to give comfort to the viewer easiness in reading and getting idea about the video\n\n  Keep it under 200 words, conversational, and optimized for YouTube search.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        -128
+      ],
+      "id": "18b9e28f-3466-4ae6-966a-32ba4f0b83ce",
+      "name": "Description Writer"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Youtube Automation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Title": "={{ $('Limit').item.json['Video Title'] }}",
+            "Youtube Description ": "={{ $json.output }}",
+            "Description": "={{ $json.output }}",
+            "Thumbnail Prompt": "={{ $('Basic LLM Chain').item.json.text }}",
+            "Thumbnail Link": "={{ $('Upload Thumbnail').item.json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image Styles",
+              "displayName": "Image Styles",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Flow Start",
+              "displayName": "Work Flow Start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Prompt",
+              "displayName": "Thumbnail Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Link",
+              "displayName": "Thumbnail Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Description ",
+              "displayName": "Youtube Description ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 19",
+              "displayName": "Column 19",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1792,
+        -128
+      ],
+      "id": "e544d7b3-c1bf-49ca-a887-9e1867f16423",
+      "name": "Update Description in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Free Images').item.json.data[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        -128
+      ],
+      "id": "f313963c-c351-4816-a660-3f32f7320a94",
+      "name": "Download Thmbnail"
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "nca-toolkit",
+        "fileName": "={{ $binary.data.fileName}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        -128
+      ],
+      "id": "716fdcdc-920b-497b-8a99-afc96a50fff4",
+      "name": "Upload - Overwrite",
+      "credentials": {
+        "s3": {
+          "id": "VSuDthoFjMjERe4Q",
+          "name": "nca-Bucket"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assume first item contains the binary data\nitems[0].binary.data.mimeType = 'video/mp4';\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        -128
+      ],
+      "id": "b2715050-71cb-4813-9236-bb4453ea3a25",
+      "name": "Set MimeType"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "613a1cf6-3f21-4f27-844e-7bcf5017053b",
+              "name": "video url",
+              "value": "={{ $('Limit').item.json['Final Video Link'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2016,
+        -128
+      ],
+      "id": "554f882a-6620-4a70-986f-f0a4bbcbe09d",
+      "name": "video url"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('video url').item.json['video url'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2912,
+        -128
+      ],
+      "id": "9c8eaa31-88a1-4bf1-a7ff-6b87033ad72e",
+      "name": "download from Minio"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Limit').item.json['Part No.'] }} | {{ $('Limit').item.json['Video Title'] }} | {{ $('Limit').item.json['Series Title'] }} Series",
+        "regionCode": "PK",
+        "categoryId": "27",
+        "options": {
+          "description": "={{ $('Description Writer').item.json.output }}",
+          "notifySubscribers": true,
+          "privacyStatus": "unlisted",
+          "publicStatsViewable": true,
+          "selfDeclaredMadeForKids": false,
+          "tags": "={{ $('Limit').item.json.Tags }}"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        3136,
+        -128
+      ],
+      "id": "731668e9-3dc8-4b8d-a003-79255950c6bd",
+      "name": "Upload to Time Flipped",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "rx8hcURpQPpD4Qpn",
+          "name": "Time Flipped"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+          "mode": "list",
+          "cachedResultName": "Time Flipped",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Time Flipped Long",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Video Title": "{{ $('Limit').item.json['Video Title'] }}",
+            "Youtube Upload Status": "Uploaded"
+          },
+          "matchingColumns": [
+            "Video Title"
+          ],
+          "schema": [
+            {
+              "id": "Series Title",
+              "displayName": "Series Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Title",
+              "displayName": "Video Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Part No.",
+              "displayName": "Part No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length of each Section ",
+              "displayName": "length of each Section ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image Styles",
+              "displayName": "Image Styles",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Status",
+              "displayName": "Job Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Video Link",
+              "displayName": "Final Video Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Upload Status",
+              "displayName": "Youtube Upload Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concatination",
+              "displayName": "Concatination",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Logo Status",
+              "displayName": "Logo Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Background Music",
+              "displayName": "Background Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Flow Start",
+              "displayName": "Work Flow Start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Prompt",
+              "displayName": "Thumbnail Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail Link",
+              "displayName": "Thumbnail Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Youtube Description ",
+              "displayName": "Youtube Description ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Script",
+              "displayName": "Script",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 19",
+              "displayName": "Column 19",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3360,
+        -128
+      ],
+      "id": "2edcf788-fa60-4b54-b791-1e1f035850e7",
+      "name": "Upload status in Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        208
+      ],
+      "id": "00f46844-3fb1-4536-9a54-461c040f8838",
+      "name": "When clicking ‘Execute workflow’",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "zubairyounus99@gmail.com",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        480
+      ],
+      "id": "7510851a-c227-467a-893a-815be46143f0",
+      "name": "Send a message",
+      "webhookId": "ff13ad8c-5120-4101-b14a-089eba5c9674",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Free Images": {
+      "main": [
+        [
+          {
+            "node": "Download Thmbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Set MimeType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Free Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Description Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Description Writer",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Upload Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Description Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Description Writer": {
+      "main": [
+        [
+          {
+            "node": "Update Description in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Description in sheet": {
+      "main": [
+        [
+          {
+            "node": "video url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Thmbnail": {
+      "main": [
+        [
+          {
+            "node": "Upload Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload - Overwrite": {
+      "main": [
+        [
+          {
+            "node": "download from Minio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set MimeType": {
+      "main": [
+        [
+          {
+            "node": "Upload - Overwrite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "video url": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download from Minio": {
+      "main": [
+        [
+          {
+            "node": "Upload to Time Flipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Time Flipped": {
+      "main": [
+        [
+          {
+            "node": "Upload status in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "UUKqPWIjdYo6Togj"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "771fd353-4e1d-49e1-9210-f2a9e16f6eed",
+  "activeVersionId": "771fd353-4e1d-49e1-9210-f2a9e16f6eed",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-10T17:30:10.064Z",
+      "createdAt": "2025-09-10T17:30:10.064Z",
+      "role": "workflow:owner",
+      "workflowId": "KblZaWgyX2Hk0PLt",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-25T19:35:47.241Z",
+    "createdAt": "2025-12-25T19:35:47.241Z",
+    "versionId": "771fd353-4e1d-49e1-9210-f2a9e16f6eed",
+    "workflowId": "KblZaWgyX2Hk0PLt",
+    "nodes": [
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+            "mode": "list",
+            "cachedResultName": "Time Flipped",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Time Flipped Long",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Job Status",
+                "lookupValue": "Completed"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -704,
+          112
+        ],
+        "id": "b91a51a0-7d5c-4713-b8dc-2d8bb66535d9",
+        "name": "Get row(s) in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "jwr2VJQX9ktvb4Sz",
+            "name": "Zubair-1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "807c739f-b4b7-41cb-92bf-7e8271e970ac",
+                "leftValue": "={{ $json['Final Video Link'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "7505d681-ea99-40b4-8aa7-d648e561cf5a",
+                "leftValue": "={{ $json['Youtube Upload Status'] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -480,
+          112
+        ],
+        "id": "4ccd21bf-b120-44e2-8a85-279035714aac",
+        "name": "If"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          -256,
+          112
+        ],
+        "id": "0d30ae41-26bb-4425-aab2-8483cb195156",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.together.xyz/v1/images/generations",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "black-forest-labs/FLUX.1-schnell-Free"
+              },
+              {
+                "name": "prompt",
+                "value": "={{ $('Basic LLM Chain').item.json.text }}"
+              },
+              {
+                "name": "steps",
+                "value": "={{ 4 }}"
+              },
+              {
+                "name": "n",
+                "value": "={{ 1 }}"
+              },
+              {
+                "name": "width",
+                "value": "={{ 1280 }}"
+              },
+              {
+                "name": "height",
+                "value": "={{ 720 }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          768,
+          -128
+        ],
+        "id": "f3d10681-e6e8-4f5c-bb19-895f1d896f4c",
+        "name": "Free Images",
+        "retryOnFail": true,
+        "waitBetweenTries": 5000,
+        "maxTries": 2,
+        "alwaysOutputData": false,
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "xNZtY56kIowFixlg",
+            "name": "together Ai"
+          },
+          "httpHeaderAuth": {
+            "id": "hBA1Z0mB998wxpr0",
+            "name": "NCA ToolKit"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -928,
+          16
+        ],
+        "id": "4a0d70d1-bbbc-45de-a3ea-165bbdb015a3",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json['video url'] }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            },
+            "timeout": 1500000
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2240,
+          -128
+        ],
+        "id": "ed743ee6-41c9-4ed4-9c85-95c02eb262cd",
+        "name": "Download File",
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8eb75842-7382-4ad9-825b-f072800d02a9",
+                "leftValue": "={{ $json.name }}",
+                "rightValue": "={{ $('Limit').item.json['Video Title'] }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          192,
+          32
+        ],
+        "id": "2e9690e7-3e71-4bfd-8f63-51cfd2ef3194",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "name": "={{ $('Limit').item.json['Part No.'] }}|{{ $('Limit').item.json['Video Title'] }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+            "mode": "list",
+            "cachedResultName": "Final Videos",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          480,
+          176
+        ],
+        "id": "14394791-a11a-429c-b59d-1d269b127b26",
+        "name": "Create folder",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "s0OPOxW9bDMLB0mT",
+            "name": "zubair-2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.name }}",
+          "needsFallback": true,
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=You are an **Expert YouTube Thumbnail Prompt Generator**.  \n\nYour job is to create a single cinematic thumbnail prompt for an AI image generator (Flux Schnell, Stable Diffusion-like).  \n\n---\n\n### CONTEXT INPUTS YOU WILL RECEIVE:\n- Series Title: {{ $('Limit').item.json['Series Title'] }}\n- Video Title: {{ $('Limit').item.json['Video Title'] }}\n\n---\n\n### THUMBNAIL PROMPT RULES:\n- **Concept:** The thumbnail must reflect the essence, emotion, and vibe of the Series + Video Title.  \n- **Composition:** It can creatively merge or overlay multiple images (e.g., past vs. future, before vs. after, light vs. dark) in one frame.  \n- **Background Scene:** Must visualize the story’s core idea (adventure, mystery, survival, science-fiction, etc.).  \n- **Camera Angle:** Cinematic wide shot, dramatic close-up, or aerial view.  \n- **Lighting:** Neon glow, cosmic flares, or dramatic shadows depending on theme.  \n- **Style:** Ultra-detailed, cinematic, futuristic, or mysterious — matching the channel’s style.  \n- **Colors:** Bold, high-contrast, eye-catching (neon blues, fiery oranges, deep blacks).  \n\n---\n\n### IMPORTANT REMINDERS:\n- Do NOT output explanations, markdown, or extra notes.  \n- Always keep the style **cinematic, mysterious, and engaging**.  \n- Ensure the thumbnail feels like it belongs to the same channel & series.  \n"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          416,
+          -224
+        ],
+        "id": "bb674162-6063-46c0-9c47-a684b9b00f99",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "model": "=deepseek/deepseek-chat-v3.1:free",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          432,
+          0
+        ],
+        "id": "6b40d437-8816-4b92-90cc-69159d46f3d1",
+        "name": "OpenRouter Chat Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "65mlukvVZpheBc3O",
+            "name": "new openrouter key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-nano",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-nano"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          560,
+          0
+        ],
+        "id": "52097282-59c7-411a-ad53-a31558b4955d",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "mfO0dqgKTdN60Ofd",
+            "name": "zubair-1 Paid"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          768,
+          176
+        ],
+        "id": "595cd61b-c323-47de-99f9-67820f41a7a8",
+        "name": "Wait",
+        "webhookId": "9905deb9-d4bf-46e7-95e2-6d1fd4a9e0a9"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3fc4fda0-e949-4c1f-a400-6d28b08e5091",
+                "name": "Video Title",
+                "value": "={{ $('Limit').item.json['Video Title'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          992,
+          256
+        ],
+        "id": "8923875b-860b-4aee-9865-dd23aa544cce",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "={{ $json['Part No.'] }}|{{ $json['Video Title'] }}",
+          "limit": 1,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS",
+              "mode": "list",
+              "cachedResultName": "Final Videos",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/10w4JxSqa0xhcAp8hd1dMWP7cTJwD1uFS"
+            },
+            "whatToSearch": "folders"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          -32,
+          112
+        ],
+        "id": "dacefffd-0141-4bd8-baba-fb8957f05d3f",
+        "name": "Search files and folders",
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "s0OPOxW9bDMLB0mT",
+            "name": "zubair-2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "deepseek/deepseek-chat-v3.1:free",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          1456,
+          112
+        ],
+        "id": "20c0b089-8711-42a3-9029-2c54d30ce9df",
+        "name": "OpenRouter Chat Model1",
+        "credentials": {
+          "openRouterApi": {
+            "id": "65mlukvVZpheBc3O",
+            "name": "new openrouter key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-nano",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-nano"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1584,
+          112
+        ],
+        "id": "5310d0dd-d8ef-43f3-89be-808b0fdda7bf",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "mfO0dqgKTdN60Ofd",
+            "name": "zubair-1 Paid"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "=Thumbnail|{{ $('Limit').item.json['Video Title'] }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('If1').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1216,
+          -128
+        ],
+        "id": "5eacddfa-b30d-4393-8fde-999ec3f492e1",
+        "name": "Upload Thumbnail",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "s0OPOxW9bDMLB0mT",
+            "name": "zubair-2"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Video Title:  {{ $('Limit').item.json['Video Title'] }}\nSeries Title: {{ $('Limit').item.json['Series Title'] }}\nEpisode Number:{{ $('Limit').item.json['Part No.'] }}",
+          "needsFallback": true,
+          "options": {
+            "systemMessage": "=You are an expert YouTube SEO content creator. \n  Your task is to write a highly engaging and SEO-optimized YouTube video description.\n\n  Video Information:\n  - Series Title: {{ $('Limit').item.json['Series Title'] }}\n  - Video Title: {{ $('Limit').item.json['Video Title'] }}\n  - Episode Number: {{ $('Limit').item.json['Part No.'] }}\n  Instructions:\n  1. Start with a strong hook (2–3 sentences) to grab attention.\n  2. Naturally include important keywords from the video title and series.\n  3. Provide a short summary of what viewers will learn or experience.\n  4. Add a call-to-action (subscribe, like, comment).\n  5. Include relevant hashtags at the end (3–5 strong tags).\n  6. Series Title and Episode Numbers are just for refence to provide you context. \n  7. Use SEO-Optimized emojis and expressions based on content to give comfort to the viewer easiness in reading and getting idea about the video\n\n  Keep it under 200 words, conversational, and optimized for YouTube search.\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          1440,
+          -128
+        ],
+        "id": "18b9e28f-3466-4ae6-966a-32ba4f0b83ce",
+        "name": "Description Writer"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+            "mode": "list",
+            "cachedResultName": "Youtube Automation",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Time Flipped Long",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Video Title": "={{ $('Limit').item.json['Video Title'] }}",
+              "Youtube Description ": "={{ $json.output }}",
+              "Description": "={{ $json.output }}",
+              "Thumbnail Prompt": "={{ $('Basic LLM Chain').item.json.text }}",
+              "Thumbnail Link": "={{ $('Upload Thumbnail').item.json.webViewLink }}"
+            },
+            "matchingColumns": [
+              "Video Title"
+            ],
+            "schema": [
+              {
+                "id": "Series Title",
+                "displayName": "Series Title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Video Title",
+                "displayName": "Video Title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Description",
+                "displayName": "Description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Part No.",
+                "displayName": "Part No.",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Tags",
+                "displayName": "Tags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "length of each Section ",
+                "displayName": "length of each Section ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Image Styles",
+                "displayName": "Image Styles",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Job Status",
+                "displayName": "Job Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Final Video Link",
+                "displayName": "Final Video Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Youtube Upload Status",
+                "displayName": "Youtube Upload Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Concatination",
+                "displayName": "Concatination",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Logo Status",
+                "displayName": "Logo Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Background Music",
+                "displayName": "Background Music",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Work Flow Start",
+                "displayName": "Work Flow Start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Thumbnail Prompt",
+                "displayName": "Thumbnail Prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Thumbnail Link",
+                "displayName": "Thumbnail Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Youtube Description ",
+                "displayName": "Youtube Description ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Script",
+                "displayName": "Script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Column 19",
+                "displayName": "Column 19",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1792,
+          -128
+        ],
+        "id": "e544d7b3-c1bf-49ca-a887-9e1867f16423",
+        "name": "Update Description in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "jwr2VJQX9ktvb4Sz",
+            "name": "Zubair-1"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Free Images').item.json.data[0].url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          992,
+          -128
+        ],
+        "id": "f313963c-c351-4816-a660-3f32f7320a94",
+        "name": "Download Thmbnail"
+      },
+      {
+        "parameters": {
+          "operation": "upload",
+          "bucketName": "nca-toolkit",
+          "fileName": "={{ $binary.data.fileName}}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.s3",
+        "typeVersion": 1,
+        "position": [
+          2688,
+          -128
+        ],
+        "id": "716fdcdc-920b-497b-8a99-afc96a50fff4",
+        "name": "Upload - Overwrite",
+        "credentials": {
+          "s3": {
+            "id": "VSuDthoFjMjERe4Q",
+            "name": "nca-Bucket"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Assume first item contains the binary data\nitems[0].binary.data.mimeType = 'video/mp4';\nreturn items;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2464,
+          -128
+        ],
+        "id": "b2715050-71cb-4813-9236-bb4453ea3a25",
+        "name": "Set MimeType"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "613a1cf6-3f21-4f27-844e-7bcf5017053b",
+                "name": "video url",
+                "value": "={{ $('Limit').item.json['Final Video Link'] }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2016,
+          -128
+        ],
+        "id": "554f882a-6620-4a70-986f-f0a4bbcbe09d",
+        "name": "video url"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('video url').item.json['video url'] }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2912,
+          -128
+        ],
+        "id": "9c8eaa31-88a1-4bf1-a7ff-6b87033ad72e",
+        "name": "download from Minio"
+      },
+      {
+        "parameters": {
+          "resource": "video",
+          "operation": "upload",
+          "title": "={{ $('Limit').item.json['Part No.'] }} | {{ $('Limit').item.json['Video Title'] }} | {{ $('Limit').item.json['Series Title'] }} Series",
+          "regionCode": "PK",
+          "categoryId": "27",
+          "options": {
+            "description": "={{ $('Description Writer').item.json.output }}",
+            "notifySubscribers": true,
+            "privacyStatus": "unlisted",
+            "publicStatsViewable": true,
+            "selfDeclaredMadeForKids": false,
+            "tags": "={{ $('Limit').item.json.Tags }}"
+          }
+        },
+        "type": "n8n-nodes-base.youTube",
+        "typeVersion": 1,
+        "position": [
+          3136,
+          -128
+        ],
+        "id": "731668e9-3dc8-4b8d-a003-79255950c6bd",
+        "name": "Upload to Time Flipped",
+        "credentials": {
+          "youTubeOAuth2Api": {
+            "id": "rx8hcURpQPpD4Qpn",
+            "name": "Time Flipped"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc",
+            "mode": "list",
+            "cachedResultName": "Time Flipped",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Time Flipped Long",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ObWBBmct1XQcNqgpZCLW8iM9f8Z2bxYiOrpq58-X2Lc/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Video Title": "{{ $('Limit').item.json['Video Title'] }}",
+              "Youtube Upload Status": "Uploaded"
+            },
+            "matchingColumns": [
+              "Video Title"
+            ],
+            "schema": [
+              {
+                "id": "Series Title",
+                "displayName": "Series Title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Video Title",
+                "displayName": "Video Title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Description",
+                "displayName": "Description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Part No.",
+                "displayName": "Part No.",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Tags",
+                "displayName": "Tags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "length of each Section ",
+                "displayName": "length of each Section ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Image Styles",
+                "displayName": "Image Styles",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Job Status",
+                "displayName": "Job Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Final Video Link",
+                "displayName": "Final Video Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Youtube Upload Status",
+                "displayName": "Youtube Upload Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Concatination",
+                "displayName": "Concatination",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Logo Status",
+                "displayName": "Logo Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Background Music",
+                "displayName": "Background Music",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Work Flow Start",
+                "displayName": "Work Flow Start",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Thumbnail Prompt",
+                "displayName": "Thumbnail Prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Thumbnail Link",
+                "displayName": "Thumbnail Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Youtube Description ",
+                "displayName": "Youtube Description ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Script",
+                "displayName": "Script",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Column 19",
+                "displayName": "Column 19",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          3360,
+          -128
+        ],
+        "id": "2edcf788-fa60-4b54-b791-1e1f035850e7",
+        "name": "Upload status in Sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "jwr2VJQX9ktvb4Sz",
+            "name": "Zubair-1"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -928,
+          208
+        ],
+        "id": "00f46844-3fb1-4536-9a54-461c040f8838",
+        "name": "When clicking ‘Execute workflow’",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "sendTo": "zubairyounus99@gmail.com",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          -928,
+          480
+        ],
+        "id": "7510851a-c227-467a-893a-815be46143f0",
+        "name": "Send a message",
+        "webhookId": "ff13ad8c-5120-4101-b14a-089eba5c9674",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "7qT7qFwOWnIR3zCg",
+            "name": "zubairyounOus"
+          }
+        },
+        "disabled": true
+      }
+    ],
+    "connections": {
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Search files and folders",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Free Images": {
+        "main": [
+          [
+            {
+              "node": "Download Thmbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download File": {
+        "main": [
+          [
+            {
+              "node": "Set MimeType",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create folder",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create folder": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Free Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Search files and folders",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search files and folders": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Description Writer",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Description Writer",
+              "type": "ai_languageModel",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Upload Thumbnail": {
+        "main": [
+          [
+            {
+              "node": "Description Writer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Description Writer": {
+        "main": [
+          [
+            {
+              "node": "Update Description in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Description in sheet": {
+        "main": [
+          [
+            {
+              "node": "video url",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Thmbnail": {
+        "main": [
+          [
+            {
+              "node": "Upload Thumbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload - Overwrite": {
+        "main": [
+          [
+            {
+              "node": "download from Minio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set MimeType": {
+        "main": [
+          [
+            {
+              "node": "Upload - Overwrite",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "video url": {
+        "main": [
+          [
+            {
+              "node": "Download File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "download from Minio": {
+        "main": [
+          [
+            {
+              "node": "Upload to Time Flipped",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Time Flipped": {
+        "main": [
+          [
+            {
+              "node": "Upload status in Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2025-09-08T06:06:20.811Z",
+      "createdAt": "2025-09-08T06:06:20.811Z",
+      "id": "RNWde51of0nnQzPD",
+      "name": "Video Automation"
+    }
+  ]
+}
