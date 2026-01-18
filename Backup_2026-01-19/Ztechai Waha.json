@@ -1,0 +1,235 @@
+{
+  "updatedAt": "2025-10-28T05:24:46.183Z",
+  "createdAt": "2025-09-20T02:30:03.312Z",
+  "id": "d353sYjJnlxV7u8M",
+  "name": "Ztechai Waha",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "ZtechAI",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -688,
+        0
+      ],
+      "id": "dde52c09-2478-46e1-8ab9-cb70c189bf9f",
+      "name": "Webhook",
+      "webhookId": "fe234b5f-a3b4-4229-8eb1-245cb18a83de"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0daed8a3-dd0e-4623-873f-1a505c56b818",
+              "leftValue": "={{ $json.query['hub.mode'] }}",
+              "rightValue": "subscribe",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -480,
+        0
+      ],
+      "id": "1ec88404-4aec-4aff-b11d-9d90584220cc",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Text",
+                "value": "={{ $json.query['hub.challenge'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -272,
+        -96
+      ],
+      "id": "1409338e-ff67-4bea-9b33-b788434424d4",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "24d2ded5-4b60-4c89-930f-ca35c2d8b390",
+  "activeVersionId": "24d2ded5-4b60-4c89-930f-ca35c2d8b390",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-20T02:30:03.312Z",
+      "createdAt": "2025-09-20T02:30:03.312Z",
+      "role": "workflow:owner",
+      "workflowId": "d353sYjJnlxV7u8M",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-28T18:49:38.908Z",
+    "createdAt": "2025-11-28T18:49:38.908Z",
+    "versionId": "24d2ded5-4b60-4c89-930f-ca35c2d8b390",
+    "workflowId": "d353sYjJnlxV7u8M",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "ZtechAI",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -688,
+          0
+        ],
+        "id": "dde52c09-2478-46e1-8ab9-cb70c189bf9f",
+        "name": "Webhook",
+        "webhookId": "fe234b5f-a3b4-4229-8eb1-245cb18a83de"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "0daed8a3-dd0e-4623-873f-1a505c56b818",
+                "leftValue": "={{ $json.query['hub.mode'] }}",
+                "rightValue": "subscribe",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -480,
+          0
+        ],
+        "id": "1ec88404-4aec-4aff-b11d-9d90584220cc",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Text",
+                  "value": "={{ $json.query['hub.challenge'] }}"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          -272,
+          -96
+        ],
+        "id": "1409338e-ff67-4bea-9b33-b788434424d4",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
