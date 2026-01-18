@@ -1,0 +1,594 @@
+{
+  "updatedAt": "2026-01-15T22:13:58.966Z",
+  "createdAt": "2026-01-09T20:50:55.086Z",
+  "id": "d099lRqZ3m7nWBIh",
+  "name": "Get Email of Business",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -304
+      ],
+      "id": "218032ed-42c7-4fb1-b065-b777e293a38f",
+      "name": "Draft Email"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        224
+      ],
+      "id": "2087894c-340d-49dd-843f-9b479200e968",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps",
+          "mode": "list",
+          "cachedResultName": "Apify Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1401081524,
+          "mode": "list",
+          "cachedResultName": "data 1000 records",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps/edit#gid=1401081524"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        192,
+        -304
+      ],
+      "id": "947b60cf-2a21-46aa-9734-1d548d94685e",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        416,
+        -304
+      ],
+      "id": "ef8359da-758b-4293-9491-863a2ac4dde0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -448
+      ],
+      "id": "5505a3d5-04c0-437c-b301-652e3dabbe34",
+      "name": "Wait",
+      "webhookId": "428247a7-ea2d-4549-8c5d-30cd04b843e4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mxw523yxvl2ez1c",
+        "returnAll": true,
+        "options": {
+          "fields": []
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        -720
+      ],
+      "id": "06cdeef9-970e-45fa-860d-e32c1ac56ad9",
+      "name": "Get many rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mxw523yxvl2ez1c",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        640,
+        -256
+      ],
+      "id": "623f96c1-b46e-4e43-94aa-37ac460755b2",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        192,
+        -720
+      ],
+      "id": "cbc24559-5f75-4608-b822-8a2dd97d843f",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "delete",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mxw523yxvl2ez1c",
+        "id": "={{ $json.Id }}"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        416,
+        -672
+      ],
+      "id": "c0716d96-a64d-4f72-849e-c057e07cd271",
+      "name": "Delete a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        -864
+      ],
+      "id": "80cb3ff1-6b1e-4220-9693-ae3211a8c902",
+      "name": "Wait1",
+      "webhookId": "a5d644a5-a313-4d7d-aa2c-8c7d6bf314ac"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mhb9q9b7ic0mb05",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        192,
+        224
+      ],
+      "id": "7366899b-d921-4a18-a0f6-1f71c5e7b53b",
+      "name": "Get many rows1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "351d295f-e0b6-4a74-8218-f23fddc1c6e0",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        624,
+        224
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {},
+      "id": "75add7a3-01e9-448a-a8a6-54fe589e7542",
+      "name": "Wait3",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        848,
+        -48
+      ],
+      "webhookId": "0fe34756-6e43-4603-8891-5747a9a6500a",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.website }}",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "9eb84a73-56e4-4227-9b88-116190038a61",
+      "name": "Scrape Site",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        848,
+        144
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ email: \"Not Scraped\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "692f8b38-21ae-4a86-b9cf-df294dc417aa",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $json.data || $json.body || $json.html || \"\";\n\nif (!html || typeof html !== \"string\") {\n  return [{ email: \"No Email\" }];\n}\n\n// Regex to extract emails from HTML/text\nconst regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\nconst emails = html.match(regex);\n\n// Return the first email if found\nif (emails && emails.length > 0) {\n  return [{ email: emails[0] }];\n}\n\nreturn [{ email: \"No Email\" }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        224
+      ],
+      "id": "d43fb413-35f7-4f0a-b54b-551fd49273a5",
+      "name": "Email or No Email"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mhb9q9b7ic0mb05",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "id",
+              "fieldValue": "={{ $('Get many rows1').item.json.Id }}"
+            },
+            {
+              "fieldName": "Email",
+              "fieldValue": "={{ $json.email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1072,
+        -48
+      ],
+      "id": "40dac792-11b6-4aee-9ce3-24df47d4e5b0",
+      "name": "Update Rows",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ed3c233-629f-41f1-a15b-c2555eebe48f",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cb2d0aa3-0cd3-4cc7-bf4b-3204885bac76",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "No Email",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "7dc72f43-b570-4920-88bd-11a11f5c6c01",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "Not Scraped",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        224
+      ],
+      "id": "cde2ae57-ece4-4591-999d-a91f2e241091",
+      "name": "Filter"
+    }
+  ],
+  "connections": {
+    "Draft Email": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape Site",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Update Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Site": {
+      "main": [
+        [
+          {
+            "node": "Email or No Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email or No Email": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "24342227-948d-4cb7-aaaf-5ad88977d7b9",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-09T20:50:55.086Z",
+      "createdAt": "2026-01-09T20:50:55.086Z",
+      "role": "workflow:owner",
+      "workflowId": "d099lRqZ3m7nWBIh",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
