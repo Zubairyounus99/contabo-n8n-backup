@@ -1,0 +1,676 @@
+{
+  "updatedAt": "2026-01-06T08:13:43.218Z",
+  "createdAt": "2026-01-03T20:59:30.074Z",
+  "id": "RfWS14CW715aehD7",
+  "name": "Re-Writing Mail",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.Website }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        832,
+        -192
+      ],
+      "id": "e8575a97-12a8-4c9e-868d-5f91ae70c039",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a professional, friendly B2B outreach AI agent representing ZTECHAI.\n\nYour task is to generate a concise, professional cold outreach email in HTML format ONLY.\n\n========================\nINFORMATION EXTRACTION\n========================\n1. Analyze the provided HTML to identify:\n   - Business type (clinic, agency, law firm, SaaS, restaurant, eCommerce, etc.)\n   - Author / owner / contact name if available\n\n2. If a personal name is found, address the email to that person.\n3. If no name is found, address the email to:\n   - \"The {{business_type}} Team\"\n   - OR \"Team {{business_name}}\" if business name is identifiable\n4. Never invent or guess names.\n\n========================\nOUTPUT FORMAT RULES\n========================\n- Output ONLY valid HTML\n- Allowed tags: <p>, <strong>, <ul>, <li>, <br>, <a>\n- No markdown\n- No JSON\n- No explanations\n- No subject line\n- Keep the email short, compact, and easy to scan\n- No exaggeration or unrealistic promises\n\n========================\nEMAIL STRUCTURE\n========================\n\n1. Greeting\n   - Properly greet the extracted name or business team\n\n2. Website Appreciation (1 short paragraph)\n   - Mention you visited their website\n   - Compliment clean design, clarity, or professionalism\n\n3. Opportunity Identification\n   - Mention common issues businesses like theirs face:\n     - Missed calls\n     - After-hours inquiries\n     - Busy staff unable to respond instantly\n   - Frame this as missed opportunities, not mistakes\n\n4. ZTECHAI Solution\n   - Introduce AI Voice Agents that:\n     - Answer calls automatically\n     - Capture and qualify leads\n     - Book appointments\n     - Handle FAQs\n     - Route urgent calls\n     - Operate 24/7, 365 days\n\n5. AI vs Human Agents (Concise Comparison)\n   - Human Agents:\n     - Limited hours\n     - Higher staffing costs\n     - Missed calls during peak times\n   - AI Voice Agents:\n     - 24/7 availability\n     - Up to 90% cost reduction\n     - No missed calls\n     - Consistent performance\n\n6. Conversion Boosting Features\n   - Mention briefly:\n     - Instant response to callers\n     - CRM & calendar integration\n     - Call analytics & recordings\n     - Scales automatically with demand\n\n7. Call to Action (Soft & Professional)\n   - Encourage scheduling a free, no-obligation call\n   - Invite them to explore resources\n\n========================\nMANDATORY LINKS (AS HTML HYPERLINKS)\n========================\n\nInclude the following hyperlinks naturally in the email:\n\n- Company Website:\n  <a href=\"{{ $json['company_website_url'] }}\" target=\"_blank\">Visit our website</a>\n\n- Schedule a Meeting:\n  <a href=\"{{ $json['meeting_booking_url'] }}\" target=\"_blank\">Schedule a free consultation</a>\n\n- YouTube / Demo Videos:\n  <a href=\"{{ $json['youtube_video_1'] }}\" target=\"_blank\">Watch how AI Voice Agents work</a>\n  <a href=\"{{ $json['youtube_video_2'] }}\" target=\"_blank\">See real business use cases</a>\n\n========================\nFINAL OBJECTIVE\n========================\nProduce a short, HTML-formatted, personalized cold email that feels human, professional, and encourages the recipient to visit the website and schedule a call.\nthere should be no \n```html\\n & </p>\\n```\"type of Extra text which ruin he body of complete mail. it should simply start from Dear & End at Ztechai Team\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1056,
+        -192
+      ],
+      "id": "687ef099-4852-4402-9bd7-df69b4125330",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "google/gemma-3-27b-it:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        32
+      ],
+      "id": "281613ff-8d16-4895-a79d-bc30170d38f8",
+      "name": "Main Free",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-nano",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        32
+      ],
+      "id": "45ea25cc-c4ee-4422-b4eb-758c35c468c1",
+      "name": "Alternative Paid",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Draft Email Approval",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        -64
+      ],
+      "id": "0e0c60a4-abbe-4f23-be16-228aa4324091",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        608,
+        -64
+      ],
+      "id": "a5f75bfc-149d-4f62-bd07-548ca3ecaca6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $('Loop Over Items').item.json['Draft ID'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        -192
+      ],
+      "id": "c138c5e7-1a1e-4edf-b29a-a3a6b76d3273",
+      "name": "Get Previous Draft",
+      "webhookId": "bd316d21-aeec-405f-983d-fd318f2d615e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "delete",
+        "messageId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        -192
+      ],
+      "id": "4dca2f19-8515-4d30-b9da-e13b8e89e943",
+      "name": "Delete Previous Draft",
+      "webhookId": "30036426-2d41-4ce8-b84e-4a07111ed4fc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2208,
+        -192
+      ],
+      "id": "ad7be91e-40f4-485e-b286-51816688b591",
+      "name": "Wait",
+      "webhookId": "f01296b9-0fbc-4dd1-822d-d1f5bf1aba62"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Subject of Mail').item.json.text }}",
+        "emailType": "html",
+        "message": "={{ $('Basic LLM Chain').item.json.text }}",
+        "options": {
+          "sendTo": "={{ $('Loop Over Items').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2432,
+        -192
+      ],
+      "id": "5ae1537d-9961-454f-86f6-762871c971cb",
+      "name": "Create a new draft",
+      "webhookId": "57209174-c2cb-4704-9810-66acae69eb44",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        -192
+      ],
+      "id": "db4ca5f0-5202-4f7f-9516-06a0f5467024",
+      "name": "Get a new draft",
+      "webhookId": "27a26b62-4a40-45fb-87d5-b184c03f1ed4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website": "={{ $('Loop Over Items').item.json.Website }}",
+            "Sent Email staus": "=",
+            "Draft Email Approval": "Updated",
+            "Draft ID": "={{ $json.id }}",
+            "Email Body": "=",
+            "Draft Status": "Drafted"
+          },
+          "matchingColumns": [
+            "Website"
+          ],
+          "schema": [
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft Status",
+              "displayName": "Draft Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft ID",
+              "displayName": "Draft ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sent Email staus",
+              "displayName": "Sent Email staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft Email Approval",
+              "displayName": "Draft Email Approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        -64
+      ],
+      "id": "a6796f3f-3498-42b0-a4dc-cdfd32ab4c2b",
+      "name": "update Revision to sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "=SystemMessagePromptTemplate",
+              "message": "=You are an expert at writing viral subject lines that act as hooks.\n\n### INPUT:\nYou will receive the email body HTML. Analyze it to extract:\n- Recipient's name\n- Company name\n- Industry\n- Main benefit or pain point\n\n### OUTPUT:\nJust the subject line. Nothing else. No quotes. No explanation.\n\n### REQUIREMENTS:\n\n**LENGTH:** 6-12 words maximum\n\n**STYLE:** Hook-driven (like a viral video title)\n\n**FORMULA - Pick one that fits:**\n\n1. **Curiosity Gap:**\n- \"[Company] is losing $X every day without knowing\"\n- \"What [Industry] leaders aren't telling you about AI\"\n- \"The [Company] automation gap nobody talks about\"\n\n2. **FOMO Simple:**\n- \"Your competitors automated this. Did you?\"\n- \"[Industry] moved to AI. Where's [Company]?\"\n- \"80% of [Industry] uses AI voice now\"\n\n3. **Question Hook:**\n- \"Still paying humans to answer calls 24/7?\"\n- \"Is [Company] ready for AI voice agents?\"\n- \"Why isn't [Company] using AI voice yet?\"\n\n4. **Benefit + Curiosity:**\n- \"[Company]: Found 6 ways to cut costs 80%\"\n- \"AI voice agents = 80% savings for [Company]\"\n- \"[FirstName], see what [Industry] leaders already use\"\n\n5. **Comparison Hook:**\n- \"Manual calls vs AI voice: [Company] comparison\"\n- \"[Company]'s process vs competitors' AI automation\"\n- \"Before AI vs After AI in [Industry]\"\n\n### TONE:\n- Like a YouTube video title that makes you click\n- Create curiosity, not hype\n- Conversational, not corporate\n- One clear hook\n\n### DON'T:\n- No exclamation marks\n- No all caps\n- No \"Quick question\" or generic phrases\n- No pushy language\n\n### EXAMPLES:\n\nInstead of: \"AI Solutions for Your Business\"\nUse: \"Your competitors answer calls 24/7. Do you?\"\n\nInstead of: \"Schedule a Call to Discuss AI\"\nUse: \"Manhattan Dental losing $5K monthly on phone staff\"\n\nInstead of: \"AI Automation Opportunity\"\nUse: \"Found 6 areas your competitors already automated\"\n\n---\n\nNOW: Write only the subject line. No explanation. Just the hook."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1408,
+        -192
+      ],
+      "id": "1b45f0c5-c086-4998-be1a-e75b86fefc50",
+      "name": "Subject of Mail"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 725107913,
+          "mode": "list",
+          "cachedResultName": "Mail status",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=725107913"
+        },
+        "event": "rowUpdate",
+        "options": {
+          "columnsToWatch": [
+            "Draft Email Approval"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -64
+      ],
+      "id": "5f93f967-f569-4080-93e8-bdd1081f0e37",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "8NHK4CWFWKDH8Kq2",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        -64
+      ],
+      "id": "10893002-c86e-438e-98cf-dbc44ca43107",
+      "name": "Wait1",
+      "webhookId": "4a5c537c-991a-47c2-bb70-15f64b433c9d"
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main Free": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Subject of Mail",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alternative Paid": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "Subject of Mail",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Subject of Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Previous Draft": {
+      "main": [
+        [
+          {
+            "node": "Delete Previous Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Previous Draft": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Create a new draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a new draft": {
+      "main": [
+        [
+          {
+            "node": "Get a new draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a new draft": {
+      "main": [
+        [
+          {
+            "node": "update Revision to sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update Revision to sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subject of Mail": {
+      "main": [
+        [
+          {
+            "node": "Get Previous Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "UUKqPWIjdYo6Togj",
+    "timeSavedPerExecution": 5
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "node:Google Sheets Trigger": {
+      "documentId": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+      "sheetId": 725107913,
+      "lastRevision": 2234,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY&revision=2234&exportFormat=xlsx"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "69c6d99f-b326-41e2-8444-1cbb7cd5e81b",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-03T20:59:30.074Z",
+      "createdAt": "2026-01-03T20:59:30.074Z",
+      "role": "workflow:owner",
+      "workflowId": "RfWS14CW715aehD7",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
