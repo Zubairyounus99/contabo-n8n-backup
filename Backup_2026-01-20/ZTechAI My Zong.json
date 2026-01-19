@@ -1,0 +1,1979 @@
+{
+  "updatedAt": "2025-10-28T18:28:14.778Z",
+  "createdAt": "2025-10-28T05:13:22.609Z",
+  "id": "OEiydX7EVhJDIF7N",
+  "name": "ZTechAI My Zong",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        528
+      ],
+      "id": "adbcaec7-cf5c-47b1-99f5-297283602828",
+      "name": "WhatsApp Trigger",
+      "webhookId": "c5888102-ee34-4a05-ab5d-5a35f2a8e510",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "9basJd3ffjJ8fyn9",
+          "name": "ZTechAI Zong Number"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=user Message: {{ $json.message_text }}\ncaption for image: {{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}\nCurrent Time: {{ $now }}\n{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "options": {
+          "systemMessage": "=  You are **ZtechAI Assistant**, the Whatsapp official AI representative of **ZtechAI**. \n  Your job is to engage with visitors, provide accurate information, answer questions and guide them toward ZtechAI’s AI solutions. Always be clear, professional, helpful, Concise but meaningful and to the point.\n\n  ## About ZtechAI\n  - ZtechAI is an AI solutions agency.\n  - We specialize in:\n    1. **AI Chatbots** → WhatsApp, Facebook Messenger, Instagram, Website integrations.\n    2. **AI Voice Agents** → AI-powered sales & support voice bots.\n    3. **AI Automation** → Business process automation (sales, feedback, reporting, follow-ups).\n    4. **Custom AI Training** → Fine-tuning LLMs and RAG-based chatbots for companies.\n    5. **Full-Stack Web Development** → Websites and landing pages with AI integrations.\n\n ## Tools\n  - 'ZtechAi': Use this tool to retrive data about any type of data about ZTechAI voice agents,\n  - 'Get_Calender': use this tools to check calender books for respective time and data\n  - 'Create_Event': use this tool to create a calender booking with our team. make sure that time is not already booked. give that book a title of user query he want to ask.\n  - 'Delete_Event': use this tools to delete an existing event.\n  -'Calender': Use this tool to do all calender related tasks\n\n## Communication Style\n  - Be professional but friendly.\n  - Avoid technical jargon unless asked.\n  - Provide step-by-step guidance when customers ask “how.”\n  - If user ask to check any thing in the calender or tools. you should get required user credentials to search or create that event.  \n- If the user asks for something you don’t know, politely redirect them to a contact form.\n  - Keep the answer short and To the point for the Customer\n\n  ## When Users Ask:\n  - **Company Info** → Explain ZtechAI services clearly.\n  - **Pricing** → Tell them pricing depends on business needs and redirect to booking/contact.\n  - **Demos or Examples** → Offer to share case studies or schedule a call.\n  - **Contact** → Give booking link or company email.\n  - **FAQ** → Use the stored FAQ list (you will have access in knowledge base).\n  - **Website / Links** → Share official links when relevant.\n\n  ## Important Links\n  - Main Website: https://ztechai.us\n  - Book a Call: https://cal.com/zubair-younus-4tlv0b/chatbot-booking\n  - Contact Email: zubair@ztechai.us\n  - Services Page: https://ztechai.us/services\n  - Blog: https://ztechai.us/blog\n\n  ## Behavior Rules\n  - Always represent ZtechAI as a trusted partner in AI innovation.\n  - Never make up information about pricing, services, or results.\n  - If unsure, say: “I recommend scheduling a free call with our team so we can provide exact details.”\n  - Prioritize converting inquiries into leads (encourage booking a call or filling a form).\n\n  ## Goal\n  - Help visitors understand ZtechAI’s AI solutions.\n  - Answer FAQs.\n  - Share resources and links.\n  - Guide users to book a call or leave contact details (name, whatsapp number, name or business)\n\n  ## Output\n  - always give response which is less than 3600 characters long. if greater, simplify it keeping the user query as main focus and it should be addressed.\n  - Give output in a structured & formatted format by using bold,italic, space, new line,making table, using different symbols and emojis"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        480
+      ],
+      "id": "efb904d1-0548-4751-bf5b-3d428f76f9b8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "797437983461248",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        816
+      ],
+      "id": "553c6b05-c0c1-4125-8efe-41f456290801",
+      "name": "Send message",
+      "webhookId": "67fe6b3b-fdbb-4d76-86b2-133422ff4789",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages[0].type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9d989d49-918c-498d-bb44-e89a59b79dd2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6e0a592d-c358-42c2-b89d-ddd554afb6c2",
+                    "leftValue": "={{ $json.messages[0].type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9995aa9e-fe14-42db-8524-4b5d13e81a55",
+                    "leftValue": "={{ $json.messages[0].image }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        512
+      ],
+      "id": "82b3cf32-b172-4109-b4ad-178d3c14ca63",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "={{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}",
+        "inputType": "binary",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        704
+      ],
+      "id": "ecd9b2cf-5093-4edd-941c-d0f4b92249e2",
+      "name": "Analyze image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "04L4BIAqVzDlgCrO",
+          "name": "Gemini-4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        480
+      ],
+      "id": "41edd860-501e-4663-b603-f50085b2c991",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "04L4BIAqVzDlgCrO",
+          "name": "Gemini-4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].audio.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        480
+      ],
+      "id": "bce83a80-00b2-48ce-8f14-568b327ed0d8",
+      "name": "Download Audio URL",
+      "webhookId": "9007702e-3566-412e-b063-f150cf10a4ae",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].image.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        448,
+        816
+      ],
+      "id": "11905caf-9556-4d14-bc5a-ffca2fc458a0",
+      "name": "Download Image URL",
+      "webhookId": "a4bd3af6-3f7a-4520-b7d4-4c9b460b750c",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        816
+      ],
+      "id": "a0495976-ebea-41f2-99a8-ff1b447cf532",
+      "name": "Download Image",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+              "name": "message_text",
+              "value": "={{ $json.candidates[0].content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        720
+      ],
+      "id": "2194caca-ac82-49e2-93fb-58980cf296d6",
+      "name": "Image to Text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+              "name": "message_text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        480
+      ],
+      "id": "5ba8fe24-5bc7-4851-b831-b8289b5ee02a",
+      "name": "audio to text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+              "name": "message_text",
+              "value": "={{ $json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        224
+      ],
+      "id": "84126d45-2d32-4fe0-9257-13f1de139e79",
+      "name": "Edit output name"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst inputItem  = items[0];\ninputItem.binary.data.mimeType = `audio/mpeg`;\nreturn inputItem;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2992,
+        528
+      ],
+      "id": "9c8f1285-dbc7-416c-817d-0cf0546fc7b3",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "797437983461248",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "messageType": "audio",
+        "mediaPath": "useMedian8n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        3216,
+        528
+      ],
+      "id": "3e066192-344a-4d03-a91e-95b92e98f8b0",
+      "name": "Send Voice Message",
+      "webhookId": "07e5e5a9-aa20-407e-8175-70885e601fae",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "329bc92e-4cdc-4484-b11d-8ba87e093e08",
+              "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].type }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        480
+      ],
+      "id": "0d4b8998-b1a2-4b57-a660-c087bd8d61ef",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "tableName": "ZtechAI_WA_Chat"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        704
+      ],
+      "id": "41234135-2d65-4700-9569-efe2d5452777",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "nyI1LIk7TmRM1jfT",
+          "name": "contabo Ztechai DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        480
+      ],
+      "id": "f077f922-04b2-4d4d-8fee-cd77926d5139",
+      "name": "Download Audio",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://173.212.233.128:8880/v1/audio/speech",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "kokoro"
+            },
+            {
+              "name": "input",
+              "value": "={{ $json.output.text }}"
+            },
+            {
+              "name": "voice",
+              "value": "af_bella"
+            },
+            {
+              "name": "speed",
+              "value": "1.0"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2768,
+        528
+      ],
+      "id": "a3f3f711-e511-4aba-84a8-233a02d2b620",
+      "name": "Generate Voices from Kokoro TTS",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": false,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-nano-9b-v2:free",
+        "options": {
+          "maxTokens": 6000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        704
+      ],
+      "id": "ce0159cc-2921-495e-8ba3-323f14a48cfe",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2.1,
+      "position": [
+        2416,
+        416
+      ],
+      "id": "92fae7a7-dbb6-4f4c-b5db-28ede849ad4e",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-3.3-70b-instruct:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        640
+      ],
+      "id": "6f7105cd-bbfc-41d9-97a0-513f01ebbdbd",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "797437983461248",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        224
+      ],
+      "id": "d6818c73-04b6-47cd-a274-d807cb4e110e",
+      "name": "send text",
+      "webhookId": "67fe6b3b-fdbb-4d76-86b2-133422ff4789",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "use this tool to retrieve data about ZtechAI Company",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "test",
+          "mode": "list",
+          "cachedResultName": "test"
+        },
+        "topK": 10,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1824,
+        704
+      ],
+      "id": "57463f15-befd-406e-8479-5c15004bd9fa",
+      "name": "ZtechAi",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Tzo8ULCdQIZZdu6l",
+          "name": "Time_Flipped"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        912
+      ],
+      "id": "53d8e296-1659-45bd-8f45-743f42a2a794",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "04L4BIAqVzDlgCrO",
+          "name": "Gemini-4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b7a162d0-9232-4f4c-9f42-3db4fbef8f9a",
+              "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        816
+      ],
+      "id": "c1b3cec1-4621-42d0-a948-046a85c2a246",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "797437983461248",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "=What do you want to know about this image. Please Add caption to the image and Resend image with Proper Captions. The Caption should be detailed about what you want to know. Thanks for your Cooperation.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        928
+      ],
+      "id": "3c792529-48e0-4337-b135-b0349bfb496e",
+      "name": "Send Temp Message",
+      "webhookId": "3ec58c4a-5851-4138-95e7-3ac131291f10",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Xd4OWu51W2vAUbmh",
+          "name": "ZTechAI"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit output name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Audio URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Image to Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "audio to text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio URL": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image URL": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image to Text": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "audio to text": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit output name": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send Voice Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "send text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Voices from Kokoro TTS": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Generate Voices from Kokoro TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ZtechAi": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "ZtechAi",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Temp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "UUKqPWIjdYo6Togj",
+    "timeSavedPerExecution": 10
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "0a8763a6-85b4-45f9-9a38-5b11bee4aa56",
+  "activeVersionId": "0a8763a6-85b4-45f9-9a38-5b11bee4aa56",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-10-28T05:13:22.609Z",
+      "createdAt": "2025-10-28T05:13:22.609Z",
+      "role": "workflow:owner",
+      "workflowId": "OEiydX7EVhJDIF7N",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-28T18:49:38.908Z",
+    "createdAt": "2025-11-28T18:49:38.908Z",
+    "versionId": "0a8763a6-85b4-45f9-9a38-5b11bee4aa56",
+    "workflowId": "OEiydX7EVhJDIF7N",
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "messages"
+          ],
+          "options": {}
+        },
+        "type": "n8n-nodes-base.whatsAppTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          528
+        ],
+        "id": "adbcaec7-cf5c-47b1-99f5-297283602828",
+        "name": "WhatsApp Trigger",
+        "webhookId": "c5888102-ee34-4a05-ab5d-5a35f2a8e510",
+        "credentials": {
+          "whatsAppTriggerApi": {
+            "id": "9basJd3ffjJ8fyn9",
+            "name": "ZTechAI Zong Number"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=user Message: {{ $json.message_text }}\ncaption for image: {{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}\nCurrent Time: {{ $now }}\n{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "options": {
+            "systemMessage": "=  You are **ZtechAI Assistant**, the Whatsapp official AI representative of **ZtechAI**. \n  Your job is to engage with visitors, provide accurate information, answer questions and guide them toward ZtechAI’s AI solutions. Always be clear, professional, helpful, Concise but meaningful and to the point.\n\n  ## About ZtechAI\n  - ZtechAI is an AI solutions agency.\n  - We specialize in:\n    1. **AI Chatbots** → WhatsApp, Facebook Messenger, Instagram, Website integrations.\n    2. **AI Voice Agents** → AI-powered sales & support voice bots.\n    3. **AI Automation** → Business process automation (sales, feedback, reporting, follow-ups).\n    4. **Custom AI Training** → Fine-tuning LLMs and RAG-based chatbots for companies.\n    5. **Full-Stack Web Development** → Websites and landing pages with AI integrations.\n\n ## Tools\n  - 'ZtechAi': Use this tool to retrive data about any type of data about ZTechAI voice agents,\n  - 'Get_Calender': use this tools to check calender books for respective time and data\n  - 'Create_Event': use this tool to create a calender booking with our team. make sure that time is not already booked. give that book a title of user query he want to ask.\n  - 'Delete_Event': use this tools to delete an existing event.\n  -'Calender': Use this tool to do all calender related tasks\n\n## Communication Style\n  - Be professional but friendly.\n  - Avoid technical jargon unless asked.\n  - Provide step-by-step guidance when customers ask “how.”\n  - If user ask to check any thing in the calender or tools. you should get required user credentials to search or create that event.  \n- If the user asks for something you don’t know, politely redirect them to a contact form.\n  - Keep the answer short and To the point for the Customer\n\n  ## When Users Ask:\n  - **Company Info** → Explain ZtechAI services clearly.\n  - **Pricing** → Tell them pricing depends on business needs and redirect to booking/contact.\n  - **Demos or Examples** → Offer to share case studies or schedule a call.\n  - **Contact** → Give booking link or company email.\n  - **FAQ** → Use the stored FAQ list (you will have access in knowledge base).\n  - **Website / Links** → Share official links when relevant.\n\n  ## Important Links\n  - Main Website: https://ztechai.us\n  - Book a Call: https://cal.com/zubair-younus-4tlv0b/chatbot-booking\n  - Contact Email: zubair@ztechai.us\n  - Services Page: https://ztechai.us/services\n  - Blog: https://ztechai.us/blog\n\n  ## Behavior Rules\n  - Always represent ZtechAI as a trusted partner in AI innovation.\n  - Never make up information about pricing, services, or results.\n  - If unsure, say: “I recommend scheduling a free call with our team so we can provide exact details.”\n  - Prioritize converting inquiries into leads (encourage booking a call or filling a form).\n\n  ## Goal\n  - Help visitors understand ZtechAI’s AI solutions.\n  - Answer FAQs.\n  - Share resources and links.\n  - Guide users to book a call or leave contact details (name, whatsapp number, name or business)\n\n  ## Output\n  - always give response which is less than 3600 characters long. if greater, simplify it keeping the user query as main focus and it should be addressed.\n  - Give output in a structured & formatted format by using bold,italic, space, new line,making table, using different symbols and emojis"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          1632,
+          480
+        ],
+        "id": "efb904d1-0548-4751-bf5b-3d428f76f9b8",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "operation": "send",
+          "phoneNumberId": "797437983461248",
+          "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "textBody": "={{ $json.output }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          2480,
+          816
+        ],
+        "id": "553c6b05-c0c1-4125-8efe-41f456290801",
+        "name": "Send message",
+        "webhookId": "67fe6b3b-fdbb-4d76-86b2-133422ff4789",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.messages[0].type }}",
+                      "rightValue": "text",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "9d989d49-918c-498d-bb44-e89a59b79dd2"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "text"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "6e0a592d-c358-42c2-b89d-ddd554afb6c2",
+                      "leftValue": "={{ $json.messages[0].type }}",
+                      "rightValue": "audio",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "audio"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "9995aa9e-fe14-42db-8524-4b5d13e81a55",
+                      "leftValue": "={{ $json.messages[0].image }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "object",
+                        "operation": "exists",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "image"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          224,
+          512
+        ],
+        "id": "82b3cf32-b172-4109-b4ad-178d3c14ca63",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "text": "={{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}",
+          "inputType": "binary",
+          "simplify": false,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1,
+        "position": [
+          1152,
+          704
+        ],
+        "id": "ecd9b2cf-5093-4edd-941c-d0f4b92249e2",
+        "name": "Analyze image",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "04L4BIAqVzDlgCrO",
+            "name": "Gemini-4"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          480
+        ],
+        "id": "41edd860-501e-4663-b603-f50085b2c991",
+        "name": "Transcribe a recording",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "04L4BIAqVzDlgCrO",
+            "name": "Gemini-4"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "media",
+          "operation": "mediaUrlGet",
+          "mediaGetId": "={{ $json.messages[0].audio.id }}"
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          672,
+          480
+        ],
+        "id": "bce83a80-00b2-48ce-8f14-568b327ed0d8",
+        "name": "Download Audio URL",
+        "webhookId": "9007702e-3566-412e-b063-f150cf10a4ae",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "media",
+          "operation": "mediaUrlGet",
+          "mediaGetId": "={{ $json.messages[0].image.id }}"
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          448,
+          816
+        ],
+        "id": "11905caf-9556-4d14-bc5a-ffca2fc458a0",
+        "name": "Download Image URL",
+        "webhookId": "a4bd3af6-3f7a-4520-b7d4-4c9b460b750c",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.url }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "whatsAppApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          672,
+          816
+        ],
+        "id": "a0495976-ebea-41f2-99a8-ff1b447cf532",
+        "name": "Download Image",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+                "name": "message_text",
+                "value": "={{ $json.candidates[0].content.parts[0].text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1344,
+          720
+        ],
+        "id": "2194caca-ac82-49e2-93fb-58980cf296d6",
+        "name": "Image to Text"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+                "name": "message_text",
+                "value": "={{ $json.content.parts[0].text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1344,
+          480
+        ],
+        "id": "5ba8fe24-5bc7-4851-b831-b8289b5ee02a",
+        "name": "audio to text"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e4621687-8888-4b8c-92a9-d7942a67b407",
+                "name": "message_text",
+                "value": "={{ $json.messages[0].text.body }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          976,
+          224
+        ],
+        "id": "84126d45-2d32-4fe0-9257-13f1de139e79",
+        "name": "Edit output name"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst inputItem  = items[0];\ninputItem.binary.data.mimeType = `audio/mpeg`;\nreturn inputItem;\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2992,
+          528
+        ],
+        "id": "9c8f1285-dbc7-416c-817d-0cf0546fc7b3",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "operation": "send",
+          "phoneNumberId": "797437983461248",
+          "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "messageType": "audio",
+          "mediaPath": "useMedian8n",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          3216,
+          528
+        ],
+        "id": "3e066192-344a-4d03-a91e-95b92e98f8b0",
+        "name": "Send Voice Message",
+        "webhookId": "07e5e5a9-aa20-407e-8175-70885e601fae",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "329bc92e-4cdc-4484-b11d-8ba87e093e08",
+                "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].type }}",
+                "rightValue": "audio",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2192,
+          480
+        ],
+        "id": "0d4b8998-b1a2-4b57-a660-c087bd8d61ef",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "tableName": "ZtechAI_WA_Chat"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          1696,
+          704
+        ],
+        "id": "41234135-2d65-4700-9569-efe2d5452777",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "nyI1LIk7TmRM1jfT",
+            "name": "contabo Ztechai DB"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.url }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "whatsAppApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          896,
+          480
+        ],
+        "id": "f077f922-04b2-4d4d-8fee-cd77926d5139",
+        "name": "Download Audio",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://173.212.233.128:8880/v1/audio/speech",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "kokoro"
+              },
+              {
+                "name": "input",
+                "value": "={{ $json.output.text }}"
+              },
+              {
+                "name": "voice",
+                "value": "af_bella"
+              },
+              {
+                "name": "speed",
+                "value": "1.0"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 300000
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2768,
+          528
+        ],
+        "id": "a3f3f711-e511-4aba-84a8-233a02d2b620",
+        "name": "Generate Voices from Kokoro TTS",
+        "retryOnFail": true,
+        "waitBetweenTries": 5000,
+        "alwaysOutputData": false,
+        "maxTries": 3
+      },
+      {
+        "parameters": {
+          "model": "nvidia/nemotron-nano-9b-v2:free",
+          "options": {
+            "maxTokens": 6000
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          1568,
+          704
+        ],
+        "id": "ce0159cc-2921-495e-8ba3-323f14a48cfe",
+        "name": "OpenRouter Chat Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "65mlukvVZpheBc3O",
+            "name": "new openrouter key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+        "typeVersion": 2.1,
+        "position": [
+          2416,
+          416
+        ],
+        "id": "92fae7a7-dbb6-4f4c-b5db-28ede849ad4e",
+        "name": "Summarization Chain"
+      },
+      {
+        "parameters": {
+          "model": "meta-llama/llama-3.3-70b-instruct:free",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          2496,
+          640
+        ],
+        "id": "6f7105cd-bbfc-41d9-97a0-513f01ebbdbd",
+        "name": "OpenRouter Chat Model1",
+        "credentials": {
+          "openRouterApi": {
+            "id": "65mlukvVZpheBc3O",
+            "name": "new openrouter key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "send",
+          "phoneNumberId": "797437983461248",
+          "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "textBody": "={{ $json.output }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          2480,
+          224
+        ],
+        "id": "d6818c73-04b6-47cd-a274-d807cb4e110e",
+        "name": "send text",
+        "webhookId": "67fe6b3b-fdbb-4d76-86b2-133422ff4789",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "use this tool to retrieve data about ZtechAI Company",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "test",
+            "mode": "list",
+            "cachedResultName": "test"
+          },
+          "topK": 10,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.3,
+        "position": [
+          1824,
+          704
+        ],
+        "id": "57463f15-befd-406e-8479-5c15004bd9fa",
+        "name": "ZtechAi",
+        "credentials": {
+          "pineconeApi": {
+            "id": "Tzo8ULCdQIZZdu6l",
+            "name": "Time_Flipped"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          1904,
+          912
+        ],
+        "id": "53d8e296-1659-45bd-8f45-743f42a2a794",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "04L4BIAqVzDlgCrO",
+            "name": "Gemini-4"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b7a162d0-9232-4f4c-9f42-3db4fbef8f9a",
+                "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].image.caption }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          896,
+          816
+        ],
+        "id": "c1b3cec1-4621-42d0-a948-046a85c2a246",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "operation": "send",
+          "phoneNumberId": "797437983461248",
+          "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+          "textBody": "=What do you want to know about this image. Please Add caption to the image and Resend image with Proper Captions. The Caption should be detailed about what you want to know. Thanks for your Cooperation.",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          1088,
+          928
+        ],
+        "id": "3c792529-48e0-4337-b135-b0349bfb496e",
+        "name": "Send Temp Message",
+        "webhookId": "3ec58c4a-5851-4138-95e7-3ac131291f10",
+        "credentials": {
+          "whatsAppApi": {
+            "id": "Xd4OWu51W2vAUbmh",
+            "name": "ZTechAI"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "WhatsApp Trigger": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Edit output name",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Download Audio URL",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Download Image URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analyze image": {
+        "main": [
+          [
+            {
+              "node": "Image to Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcribe a recording": {
+        "main": [
+          [
+            {
+              "node": "audio to text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Audio URL": {
+        "main": [
+          [
+            {
+              "node": "Download Audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image URL": {
+        "main": [
+          [
+            {
+              "node": "Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image to Text": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "audio to text": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit output name": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Send Voice Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "send text",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Summarization Chain",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Audio": {
+        "main": [
+          [
+            {
+              "node": "Transcribe a recording",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Voices from Kokoro TTS": {
+        "main": [
+          [
+            {
+              "node": "Code",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Summarization Chain": {
+        "main": [
+          [
+            {
+              "node": "Generate Voices from Kokoro TTS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Summarization Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ZtechAi": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "ZtechAi",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Analyze image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Temp Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2025-10-28T18:05:52.540Z",
+      "createdAt": "2025-10-28T18:05:52.540Z",
+      "id": "p694fAIiozICXpQJ",
+      "name": "ZTECHAI"
+    }
+  ]
+}
