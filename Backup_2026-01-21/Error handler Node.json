@@ -1,0 +1,141 @@
+{
+  "updatedAt": "2025-09-10T17:35:56.618Z",
+  "createdAt": "2025-09-10T17:29:10.185Z",
+  "id": "mxC90NcnmyUoKCY4",
+  "name": "Error handler Node",
+  "active": true,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4304d4cc-3232-4b7b-95ff-523319191d30",
+      "name": "Error Trigger",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "zubairyounous99@gmail.com",
+        "subject": "={{ $json.workflow.name }}-{{ $json.execution.mode }}",
+        "emailType": "text",
+        "message": "=Dear Zubair,\n\nYour Workflow {{ $json.workflow.name }} got an Error and details or errors are as folows:\n\nMode: {{ $json.execution.mode }}\n\nError Message: {{ $json.execution.error.message }}\n\nWorkflow ID: {{ $json.execution.id }}\n\nWorkflow URL:{{ $json.execution.url }}\n\nError Stack:{{ $json.execution.error.stack }}\n\nPlease look into the matter and Resolve the error ASAP.\n\n\nThanks & Regards,\nZubair Younus\nAI Automation Expert\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f408d366-c1a4-4897-b3a3-0ca1f3810ebf",
+      "name": "Send a message",
+      "webhookId": "4bde5b34-f42f-4438-8b71-ae7fd8cb091c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "0f7f9b92-1bd4-45c0-889c-736265484589",
+  "activeVersionId": "0f7f9b92-1bd4-45c0-889c-736265484589",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-10T17:29:10.185Z",
+      "createdAt": "2025-09-10T17:29:10.185Z",
+      "role": "workflow:owner",
+      "workflowId": "mxC90NcnmyUoKCY4",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-28T18:49:38.908Z",
+    "createdAt": "2025-11-28T18:49:38.908Z",
+    "versionId": "0f7f9b92-1bd4-45c0-889c-736265484589",
+    "workflowId": "mxC90NcnmyUoKCY4",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "4304d4cc-3232-4b7b-95ff-523319191d30",
+        "name": "Error Trigger",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "sendTo": "zubairyounous99@gmail.com",
+          "subject": "={{ $json.workflow.name }}-{{ $json.execution.mode }}",
+          "emailType": "text",
+          "message": "=Dear Zubair,\n\nYour Workflow {{ $json.workflow.name }} got an Error and details or errors are as folows:\n\nMode: {{ $json.execution.mode }}\n\nError Message: {{ $json.execution.error.message }}\n\nWorkflow ID: {{ $json.execution.id }}\n\nWorkflow URL:{{ $json.execution.url }}\n\nError Stack:{{ $json.execution.error.stack }}\n\nPlease look into the matter and Resolve the error ASAP.\n\n\nThanks & Regards,\nZubair Younus\nAI Automation Expert\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "f408d366-c1a4-4897-b3a3-0ca1f3810ebf",
+        "name": "Send a message",
+        "webhookId": "4bde5b34-f42f-4438-8b71-ae7fd8cb091c",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "7qT7qFwOWnIR3zCg",
+            "name": "zubairyounOus"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
