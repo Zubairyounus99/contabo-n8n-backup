@@ -1,0 +1,510 @@
+{
+  "updatedAt": "2026-01-08T09:03:41.211Z",
+  "createdAt": "2025-12-04T18:38:25.096Z",
+  "id": "1GtgKwTiPWGtFUP6",
+  "name": "Nocodedb Testing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "f756a871-25c6-4d59-b4bf-68286f66f3fd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6b724aba-92ab-4afa-9b14-6a5f3a75f160",
+              "name": "table id",
+              "value": "mygrbj5cax4mzja",
+              "type": "string"
+            },
+            {
+              "id": "9d2b3ddf-0ca3-496f-b8e8-d0e55fb9a4f0",
+              "name": "Base ID",
+              "value": "p6zldf3034zct47",
+              "type": "string"
+            },
+            {
+              "id": "ce5cb053-872f-4bd4-b5bc-15e8e73769c8",
+              "name": "cloud base id",
+              "value": "p6zldf3034zct47",
+              "type": "string"
+            },
+            {
+              "id": "b40d1f09-b231-4fd2-b55f-7c45cb14df54",
+              "name": "cloud table id",
+              "value": "mqhbjt2sd839fhc",
+              "type": "string"
+            },
+            {
+              "id": "49442297-3221-46b3-979b-2898dba3cb09",
+              "name": "nocodb_api_Key",
+              "value": "78xaXCzUBel19ptchaVIIkOfUUSiVZwAW7RhzBt3",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -208
+      ],
+      "id": "27e7a855-b457-41a5-810f-6f0564595e09",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://db.ztechai.us/api/v2/tables/{{ $json['table id'] }}/records",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "=78xaXCzUBel19ptchaVIIkOfUUSiVZwAW7RhzBt3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        512,
+        0
+      ],
+      "id": "1b2a906e-9f1f-44ea-8a74-4930d4141154",
+      "name": "Get all records"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "514a1fc8-2980-41fc-b587-dd20799f1354",
+              "leftValue": "={{ $json['Draft Status'] }}",
+              "rightValue": "=SENT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "77a960e3-39aa-4820-b1fe-32c0804f0956",
+              "leftValue": "={{ $json['Draft Status'] }}",
+              "rightValue": "Scheduled",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "23e4e9a4-9c58-4c6b-865a-0754d15cbf8d",
+              "leftValue": "={{ $json['Draft Status'] }}",
+              "rightValue": "Drafted",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        0
+      ],
+      "id": "57fb4bf2-e8dc-4667-bd53-736fff69f9f1",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        736,
+        0
+      ],
+      "id": "b9d0d70f-1361-4118-8c00-032bd5dbb394",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://db.ztechai.us/api/v2/tables/{{ $('Edit Fields').item.json['table id'] }}/records",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "={{ $('Edit Fields').item.json.nocodb_api_Key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"Id\": {{ $json.Id }},\n    \"Draft Status\": \"Drafted\"\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        0
+      ],
+      "id": "b3f7b076-30e8-4df4-90a9-698a15200b96",
+      "name": "Update record to Updated"
+    },
+    {
+      "parameters": {
+        "url": "=https://db.ztechai.us/api/v2/tables/{{ $json['table id'] }}/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "5000"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "=78xaXCzUBel19ptchaVIIkOfUUSiVZwAW7RhzBt3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        720,
+        -192
+      ],
+      "id": "46d6639b-e07c-45d8-83c8-b54b6e23e7a4",
+      "name": "Default record"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -192
+      ],
+      "id": "4c296715-014b-4a2e-9201-41a1563c8628",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps",
+          "mode": "list",
+          "cachedResultName": "Apify Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1958492619,
+          "mode": "list",
+          "cachedResultName": "dataset_crawler-google-places_2026-01-07_20-02-04-335",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10lsPxLo_soKUib_PICvl-7EIwrDiJEIB_95gp3BFhps/edit#gid=1958492619"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        -464
+      ],
+      "id": "eb1e6787-782c-48c3-9022-dfa0fd453dfa",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://db.ztechai.us/api/v2/tables/{{ $('Edit Fields').item.json['table id'] }}/records",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xc-token",
+              "value": "=78xaXCzUBel19ptchaVIIkOfUUSiVZwAW7RhzBt3"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Loop Over Items').item.json.url }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $('Loop Over Items').item.json.phone }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $('Loop Over Items').item.json.website }}"
+            },
+            {
+              "name": "map Url",
+              "value": "={{ $json.url }}{{ $json.url }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $json.website }}"
+            },
+            {
+              "name": "Category Name",
+              "value": "={{ $json.categoryName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2048,
+        -752
+      ],
+      "id": "5ee53474-aa79-4757-994d-5307da176311",
+      "name": "Add records to table"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        976,
+        -512
+      ],
+      "id": "b8724906-5092-4d8e-988f-cc7299a10bd5",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -640
+      ],
+      "id": "286ce089-2b7b-42eb-9feb-90ea50fa8366",
+      "name": "Wait",
+      "webhookId": "77d3080f-cd8a-4bdc-8c8d-f9f8642dfa7b"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pz0zuvdo00ea87j",
+        "table": "mwzny9lei3180u2",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1376,
+        -480
+      ],
+      "id": "2647d11a-4a80-4bb7-b1ba-8e6bc88d113e",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "hmlfeKtt9qXmVHJ2",
+          "name": "Nocodb Selfhosted n8n"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Default record",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get all records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all records": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Update record to Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default record": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add records to table": {
+      "main": [
+        []
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f54e5e49-a3ec-4750-827d-6cc3ed806563",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-04T18:38:25.096Z",
+      "createdAt": "2025-12-04T18:38:25.096Z",
+      "role": "workflow:owner",
+      "workflowId": "1GtgKwTiPWGtFUP6",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
