@@ -1,0 +1,519 @@
+{
+  "updatedAt": "2026-01-07T21:03:56.899Z",
+  "createdAt": "2025-09-11T01:24:17.500Z",
+  "id": "GOMjIOnWLg5sVB1I",
+  "name": "Google Maps business scraper with contact extraction via Apify and Firecrawl",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        -704
+      ],
+      "id": "21b37a18-c01d-4693-815d-383a46b9567e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1876557965,
+          "mode": "list",
+          "cachedResultName": "Raw Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=1876557965"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        -704
+      ],
+      "id": "093a6da3-377a-49a6-ad0c-872a5c747e58",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "667c0a71-a011-46af-a84c-b746c8ab774d",
+              "leftValue": "={{ $json.Website }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3403f168-2183-4acc-8237-5075a2e4e59f",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -688,
+        -704
+      ],
+      "id": "ae730c62-cd16-42ee-b1bf-df0c68a67827",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "52106901-a12c-4d50-a8fb-2e54649e5ba2",
+              "leftValue": "={{ $json['First Email Staus'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -464,
+        -704
+      ],
+      "id": "849be6b3-31eb-4465-8991-763a82a809e0",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -704
+      ],
+      "id": "f7bf1e98-1051-4289-bc47-2808031a83f9",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Website }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16,
+        -704
+      ],
+      "id": "cb2dfb52-fc81-42dc-8eb1-b9b460fa95a1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "options": {
+          "systemMessage": "=You are an AI Email Copywriter specialized in writing persuasive business outreach emails for AI automation services.  \nYou will receive raw HTML code from a prospect’s website (a dentist clinic).  \n\nYour tasks:  \n1. Extract the **business name, services, and focus areas** from the HTML.  \n2. Write a **professional, personalized email body** introducing AI services.  \n3. Begin the email with a **short AI Audit insight** about their website (e.g., it lacks AI-driven automation, online appointment reminders, or customer support AI).  \n4. Highlight the **AI Voice Agent benefits** using clear formatting:  \n   - Acts as a **24/7 receptionist**  \n   - Handles **appointment bookings & reminders**  \n   - Provides **customer support** instantly  \n   - Reduces **manual workload, cost, and energy**  \n5. Encourage them to **schedule a free online meeting** to learn how AI can save cost, time, and effort.  \n\n### Formatting rules for email body:  \n- Use **bold** and *italic* emphasis for key points.  \n- Highlight benefits with ✅, 🚀, ⏰, 💡 emojis.  \n- Use `<font color=\"blue\">` or `<font color=\"green\">` to make benefits stand out.  \n- Keep tone professional but friendly.  \n- Keep paragraphs short, scannable, and persuasive.  \n\nFinal Output:  \nReturn only the **email body (HTML formatted)**, not the subject line or metadata.  \n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        -704
+      ],
+      "id": "bd15b89f-3189-4638-aa69-fcd17d45db6f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-nano-9b-v2:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        280,
+        -480
+      ],
+      "id": "50c3ebf0-2bdc-42ef-904c-0243e5376573",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY",
+          "mode": "list",
+          "cachedResultName": "ZTechAI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1876557965,
+          "mode": "list",
+          "cachedResultName": "Raw Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kGgxT5YwE7vE8yOHbpiJKzxvD0lGYS-Cq7g4mzeLwjY/edit#gid=1876557965"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Website": "={{ $('Limit').item.json.Website }}",
+            "First Email Staus": "=Drafted",
+            "Email Body Link": "",
+            "Evaluaion": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "Website"
+          ],
+          "schema": [
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Business Type",
+              "displayName": "Business Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chatbot",
+              "displayName": "chatbot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment setter",
+              "displayName": "Appointment setter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Services",
+              "displayName": "Services",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Audit",
+              "displayName": "AI Audit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keyword Searched",
+              "displayName": "Keyword Searched",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "First Email Staus",
+              "displayName": "First Email Staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Body Link",
+              "displayName": "Email Body Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Evaluaion",
+              "displayName": "Evaluaion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        -704
+      ],
+      "id": "60eed670-f69b-40f8-ac32-064125f0eef9",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jwr2VJQX9ktvb4Sz",
+          "name": "Zubair-1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "zubairyounus99@gmail.com",
+        "subject": "Request for Collaboration",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -704
+      ],
+      "id": "95b84168-6616-45ea-9bb1-4333a0a93aea",
+      "name": "Send a message",
+      "webhookId": "6b4052e8-420a-47ef-9df3-65976effdbcf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4200c08b-4db7-40b8-ac87-7dac45d70dbd",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-11T01:24:17.500Z",
+      "createdAt": "2025-09-11T01:24:17.500Z",
+      "role": "workflow:owner",
+      "workflowId": "GOMjIOnWLg5sVB1I",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
