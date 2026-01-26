@@ -1,0 +1,626 @@
+{
+  "updatedAt": "2025-12-16T19:06:57.874Z",
+  "createdAt": "2025-11-04T18:48:53.365Z",
+  "id": "Fop1f51IAOvmvF5T",
+  "name": "WEBCalling Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "websitecallingagents",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -256
+      ],
+      "id": "26ed6152-2b44-4293-a98a-425f50eef390",
+      "name": "Webhook",
+      "webhookId": "dd4979e8-f742-48d8-b837-bbfd757e2dea"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1cbb597-d6c5-43c4-8617-24fbef960965",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        -256
+      ],
+      "id": "22f9170d-b75b-4970-8f10-43a78812928a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "notification@ztechai.us",
+        "toEmail": "={{ $('Webhook').item.json.body.email }}",
+        "subject": "Request for Demo Call for AI Voice Agents",
+        "emailFormat": "text",
+        "text": "=Dear {{ $('Webhook').item.json.body.user_name }},\n\nThanks for Requesting a Demo call. you must receive a call within 1 minute if you have provided correct number.\nyour Provided Number is: +1{{ $json.body.ph_number }}\n\nIf You didn't receive any call, please enter a Correct Phone Number.\n\nDon't Forget to provide your Feedback in order to maintain standard quality.\n\nLoooking forward to have a response from you.\n\nRegards,\nZubair Younus\nZtechai\n\n-----------------------------------------------------------------\nThis email is sent to {{ $('Webhook').item.json.body.email }} as per their request.if you have requested this action.\n\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        -256
+      ],
+      "id": "6e8efbfe-d91b-43ac-a9df-877e99493dfe",
+      "name": "send to visitor",
+      "webhookId": "17d99a2d-345f-4128-bc7a-bfa7adcfd827",
+      "alwaysOutputData": true,
+      "credentials": {
+        "smtp": {
+          "id": "9jDqUic8zNwwUeA1",
+          "name": "brevo smtp for notification"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e08ec5c2-6806-4a4e-9f83-3c24f16dd055",
+              "leftValue": "={{ $json.messageId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        -256
+      ],
+      "id": "8a324c0e-b07f-4152-b354-1770f89f4845",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "notification@ztechai.us",
+        "toEmail": "zubair@ztechai.us",
+        "subject": "New Request for Demo Call on Website.",
+        "emailFormat": "text",
+        "text": "=Dear Zubair,\n\nyou have received a viewer and he/she has requested a demo call to test out our AI Agents.\n\nDetails of that visitor is as follows:\n\nName:   {{ $('Webhook').item.json.body.user_name }}\nEmail: {{ $('Webhook').item.json.body.email }}\nPhone Number: {{$('Webhook').item.json.body.ph_number}}\nUser Message: {{ $('Webhook').item.json.body.user_message }}\nTime Stamp: {{ $('Webhook').item.json.body.time_stamp }}\n\nPlease Look into this matter and ensure he/she has received a call\n\nRegards,\nZtechAI Team",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        -352
+      ],
+      "id": "ca2e9fb9-75f3-4dfd-aed8-24b1fe059da0",
+      "name": "Send Me success",
+      "webhookId": "8673e605-1476-48e3-bb88-f19268b73d03",
+      "credentials": {
+        "smtp": {
+          "id": "9jDqUic8zNwwUeA1",
+          "name": "brevo smtp for notification"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@ztechai.us",
+        "toEmail": "zubair@ztechai.us",
+        "subject": "New Request for Demo Call on Website.",
+        "emailFormat": "text",
+        "text": "=Dear Zubair,\n\nyou have received a viewer and he/she has requested a demo call to test out our AI Agents.\n\nEmail entered by visitor was not correct.So, No email could be sent to visitor. please ask about correct email from the web.\n\nDetails of that visitor is as follows:\n\nName:  {{ $('Webhook').item.json.body.user_name }}\nEntered Email: {{ $('Webhook').item.json.body.email }}\nPhone Number: {{ $('Webhook').item.json.body.ph_number }}\nUser Message: {{ $('Webhook').item.json.body.user_message }}\nTime Stamp: {{ $('Webhook').item.json.body.time_stamp }}\nPlease Look into this matter and ensure he/she has received a call\n\nRegards,\nZtechAI Team",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        -160
+      ],
+      "id": "3c0bbc5f-5c4f-410d-8374-83ff591d612b",
+      "name": "Send Me Failure",
+      "webhookId": "8673e605-1476-48e3-bb88-f19268b73d03",
+      "credentials": {
+        "smtp": {
+          "id": "HYXscACCvF3YTkhc",
+          "name": "zubairyounOus Mail Box"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"assistantId\": \"ec4aa566-e59d-4cf5-b813-e45c15cd8124\",\n    \"phoneNumberId\": \"e688ac7a-c36e-49a7-affe-f81582afbef3\",\n    \"customer\": {\n        \"number\": \"+1{{ $json.body.ph_number }}\"\n    }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        112,
+        -16
+      ],
+      "id": "c2624ee3-6ac4-4c5d-a3b6-2947456064bb",
+      "name": "Make a Call",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "WkJwy1jJROwDBy22",
+          "name": "Vapi ZTECHAI"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Make a Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "send to visitor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "send to visitor": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send Me success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Me Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Me success": {
+      "main": [
+        []
+      ]
+    },
+    "Make a Call": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.ztechai.us",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "content-length": "132",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "ar,en-US;q=0.9,en;q=0.8",
+            "content-type": "application/json",
+            "origin": "https://ztechai.us",
+            "priority": "u=1, i",
+            "referer": "https://ztechai.us/",
+            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "x-forwarded-for": "158.140.119.210",
+            "x-forwarded-host": "n8n.ztechai.us",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "85c63185714e",
+            "x-real-ip": "158.140.119.210"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "user_name": "gaerh",
+            "email": "byanryad@gmail.com",
+            "ph_number": "8453191083",
+            "user_message": "d",
+            "time_stamp": "12/16/2025, 1:59:11 PM"
+          },
+          "webhookUrl": "https://n8n.ztechai.us/webhook/websitecallingagents",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "a8dcf9ae-761d-45fb-af33-c35a9080bea0",
+  "activeVersionId": "a8dcf9ae-761d-45fb-af33-c35a9080bea0",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-04T18:48:53.365Z",
+      "createdAt": "2025-11-04T18:48:53.365Z",
+      "role": "workflow:owner",
+      "workflowId": "Fop1f51IAOvmvF5T",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-16T19:06:57.877Z",
+    "createdAt": "2025-12-16T19:06:57.877Z",
+    "versionId": "a8dcf9ae-761d-45fb-af33-c35a9080bea0",
+    "workflowId": "Fop1f51IAOvmvF5T",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "websitecallingagents",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -320,
+          -256
+        ],
+        "id": "26ed6152-2b44-4293-a98a-425f50eef390",
+        "name": "Webhook",
+        "webhookId": "dd4979e8-f742-48d8-b837-bbfd757e2dea"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e1cbb597-d6c5-43c4-8617-24fbef960965",
+                "leftValue": "={{ $json.body.email }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -96,
+          -256
+        ],
+        "id": "22f9170d-b75b-4970-8f10-43a78812928a",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "fromEmail": "notification@ztechai.us",
+          "toEmail": "={{ $('Webhook').item.json.body.email }}",
+          "subject": "Request for Demo Call for AI Voice Agents",
+          "emailFormat": "text",
+          "text": "=Dear {{ $('Webhook').item.json.body.user_name }},\n\nThanks for Requesting a Demo call. you must receive a call within 1 minute if you have provided correct number.\nyour Provided Number is: +1{{ $json.body.ph_number }}\n\nIf You didn't receive any call, please enter a Correct Phone Number.\n\nDon't Forget to provide your Feedback in order to maintain standard quality.\n\nLoooking forward to have a response from you.\n\nRegards,\nZubair Younus\nZtechai\n\n-----------------------------------------------------------------\nThis email is sent to {{ $('Webhook').item.json.body.email }} as per their request.if you have requested this action.\n\n",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          128,
+          -256
+        ],
+        "id": "6e8efbfe-d91b-43ac-a9df-877e99493dfe",
+        "name": "send to visitor",
+        "webhookId": "17d99a2d-345f-4128-bc7a-bfa7adcfd827",
+        "alwaysOutputData": true,
+        "credentials": {
+          "smtp": {
+            "id": "9jDqUic8zNwwUeA1",
+            "name": "brevo smtp for notification"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e08ec5c2-6806-4a4e-9f83-3c24f16dd055",
+                "leftValue": "={{ $json.messageId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          352,
+          -256
+        ],
+        "id": "8a324c0e-b07f-4152-b354-1770f89f4845",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "fromEmail": "notification@ztechai.us",
+          "toEmail": "zubair@ztechai.us",
+          "subject": "New Request for Demo Call on Website.",
+          "emailFormat": "text",
+          "text": "=Dear Zubair,\n\nyou have received a viewer and he/she has requested a demo call to test out our AI Agents.\n\nDetails of that visitor is as follows:\n\nName:   {{ $('Webhook').item.json.body.user_name }}\nEmail: {{ $('Webhook').item.json.body.email }}\nPhone Number: {{$('Webhook').item.json.body.ph_number}}\nUser Message: {{ $('Webhook').item.json.body.user_message }}\nTime Stamp: {{ $('Webhook').item.json.body.time_stamp }}\n\nPlease Look into this matter and ensure he/she has received a call\n\nRegards,\nZtechAI Team",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          576,
+          -352
+        ],
+        "id": "ca2e9fb9-75f3-4dfd-aed8-24b1fe059da0",
+        "name": "Send Me success",
+        "webhookId": "8673e605-1476-48e3-bb88-f19268b73d03",
+        "credentials": {
+          "smtp": {
+            "id": "9jDqUic8zNwwUeA1",
+            "name": "brevo smtp for notification"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "info@ztechai.us",
+          "toEmail": "zubair@ztechai.us",
+          "subject": "New Request for Demo Call on Website.",
+          "emailFormat": "text",
+          "text": "=Dear Zubair,\n\nyou have received a viewer and he/she has requested a demo call to test out our AI Agents.\n\nEmail entered by visitor was not correct.So, No email could be sent to visitor. please ask about correct email from the web.\n\nDetails of that visitor is as follows:\n\nName:  {{ $('Webhook').item.json.body.user_name }}\nEntered Email: {{ $('Webhook').item.json.body.email }}\nPhone Number: {{ $('Webhook').item.json.body.ph_number }}\nUser Message: {{ $('Webhook').item.json.body.user_message }}\nTime Stamp: {{ $('Webhook').item.json.body.time_stamp }}\nPlease Look into this matter and ensure he/she has received a call\n\nRegards,\nZtechAI Team",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          576,
+          -160
+        ],
+        "id": "3c0bbc5f-5c4f-410d-8374-83ff591d612b",
+        "name": "Send Me Failure",
+        "webhookId": "8673e605-1476-48e3-bb88-f19268b73d03",
+        "credentials": {
+          "smtp": {
+            "id": "HYXscACCvF3YTkhc",
+            "name": "zubairyounOus Mail Box"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.vapi.ai/call",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"assistantId\": \"ec4aa566-e59d-4cf5-b813-e45c15cd8124\",\n    \"phoneNumberId\": \"e688ac7a-c36e-49a7-affe-f81582afbef3\",\n    \"customer\": {\n        \"number\": \"+1{{ $json.body.ph_number }}\"\n    }\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          112,
+          -16
+        ],
+        "id": "c2624ee3-6ac4-4c5d-a3b6-2947456064bb",
+        "name": "Make a Call",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "WkJwy1jJROwDBy22",
+            "name": "Vapi ZTECHAI"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Make a Call",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "send to visitor",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "send to visitor": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [
+            {
+              "node": "Send Me success",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Me Failure",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Me success": {
+        "main": [
+          []
+        ]
+      },
+      "Make a Call": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Zubair Younus",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
