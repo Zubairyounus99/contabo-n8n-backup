@@ -1,0 +1,714 @@
+{
+  "updatedAt": "2025-12-04T20:34:36.073Z",
+  "createdAt": "2025-12-04T17:50:54.724Z",
+  "id": "BcfLb3R4ippZxQYK",
+  "name": "AI Newsletter Demo",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1232,
+        -64
+      ],
+      "id": "58b29bbf-7a53-46be-ba85-6e7232ee8e45",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        240
+      ],
+      "id": "6e7f7a1b-0a35-4d1f-9e7d-6da072344520",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"title\", \"topics\"],\n  \"properties\": {\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"A short, descriptive title\"\n    },\n    \"topics\": {\n      \"type\": \"array\",\n      \"description\": \"An array of exactly three topics\",\n      \"minItems\": 3,\n      \"maxItems\": 3,\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"additionalProperties\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2256,
+        240
+      ],
+      "id": "799907af-5f3c-4d57-bdd9-b0a4455c0970",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.topics",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        48
+      ],
+      "id": "69309aa0-d3e1-458f-b204-7565b0d06d01",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $json.query }}\n\nResearch:\n{{ $json.results.map(item => JSON.stringify(item, null, 2)).join('\\n\\n') }}\n",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a professional newsletter section writer. Your only task is to write one standalone section of a newsletter.\n\n## Instructions\n- Always include a clear section heading followed by the section content.\n- Do not write an overall title, introduction, or conclusion.\n- Write in a professional, expert, and engaging tone suitable for a business newsletter.\n- If you reference facts, data, or quotes, you must cite your sources and provide the actual clickable URLs.\n- Do not invent citations—only include real, verifiable sources.\n- Keep the section concise, well-structured, and easy to read.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2752,
+        48
+      ],
+      "id": "cb162ca5-bec5-4b89-a16b-dd26ec1c20bc",
+      "name": "Section Writer Agent"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        48
+      ],
+      "id": "57447480-178c-44c9-a20d-433a6b9896a8",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        240
+      ],
+      "id": "da88a720-d416-4010-bc6b-deccba9984cc",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "65mlukvVZpheBc3O",
+          "name": "new openrouter key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title: {{ $('Planning Agent').item.json.output.title }}\n\nSections: {{ $json.output.join(\"\\n\\n\\n\") }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert newsletter editor. Merge exactly three provided sections into a cohesive, email-ready HTML body with a holistic introduction and conclusion. Maintain a professional, concise tone for a business audience and preserve intended meaning.\n\n## Goals\n- Refine clarity, flow, and consistency across all sections.\n- Keep total content output ≤ 1000 words (hard limit). Avoid fluff.\n\n## Structure (HTML only)\n1) <p> Introduction that frames the three topics and their relevance; reference today’s date: {{ $now.format('yyyy-MM-dd') }}.\n2) For each provided section:\n   - <h2> Use or lightly adjust the given title.\n   - Edited <p> content.\n   - Inline, clickable citations near related claims using <a href=\"https://...\">Source</a>. Never invent sources.\n3) <h3>Sources</h3><ul> A single consolidated list:\n   - Each item: <li><a href=\"[URL]\">[Publication Name] – [Article Title]</a></li>\n   - Include full URLs, deduplicate identical links, and alphabetize by Publication Name.\n4) <p> Conclusion tying threads together with implications or next steps.\n\n## Citation and Link Rules\n- Every factual claim relying on external information must include a real, verifiable, clickable URL.\n- Preserve any provided citations; standardize to the <a> format.\n- Omit unverifiable links rather than fabricate.\n- Use only basic HTML tags (<h2>, <h3>, <p>, <ul>, <li>, <a>). No images, scripts, styles, or external CSS.\n\n## Input\n- You will receive three sections. Edit and integrate them without adding unrelated topics.\n\nOutput Format (return only this)\nSubject: One clear, specific subject line (≤ 80 characters)\n\nContent:\n[HTML body only as specified above]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        3216,
+        48
+      ],
+      "id": "d3257f0f-5440-49f7-b03c-a2266040c24e",
+      "name": "Editor Agent"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "={\n  \"type\": \"object\",\n  \"properties\": {\n    \"subject\": {\n      \"type\": \"string\",\n      \"description\": \"the email subject\"\n    },\n    \"content\": {\n      \"type\": \"string\",\n      \"description\": \"the newsletter content\"\n    }\n  },\n  \"required\": [\"subject\", \"content\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3024,
+        240
+      ],
+      "id": "c055b294-0342-4a17-bb30-45f1412de5f7",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.output.content }}",
+        "options": {
+          "sendTo": "zubairyounus99@gmail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3616,
+        48
+      ],
+      "id": "1312fea3-a81d-45c8-af20-eac41cb09341",
+      "name": "Create a draft",
+      "webhookId": "631942e2-3370-4f03-a546-94e4a3a87b55",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7qT7qFwOWnIR3zCg",
+          "name": "zubairyounOus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 🧠 AI-Powered Newsletter Setup Guide  \n\nFollow these steps to generate a research-backed newsletter with agents and automation:\n\n### ✅ Step 1: Choose Your Schedule  \nOpen the **Schedule Trigger** and set the time you'd like this workflow to run. This controls when your newsletter will be auto-generated.\n\n### ✅ Step 2: Connect Your [Tavily](https://www.tavily.com/) API Key  \nAdd your Tavily key to the two Tavily nodes. These nodes power the research phase of your newsletter.\n\n### ✅ Step 3: Set Your Newsletter Topic  \nIn the **Initial Research** node, enter the topic you'd like researched in the **Query** field. This tells Tavily what to research, and it is what the agents will write about.\n\n### ✅ Step 4: Connect Your [OpenRouter](https://openrouter.ai/) API Key  \nThis powers the three agents that handle writing and formatting. Add your key via the OpenRouter Chat Model nodes.\n\n### ✅ Step 5: Link Your Gmail  \nConnect your Gmail credentials so the final draft can be emailed to you—or anyone else you choose.\n\n### ✅ Step 6: Activate the Workflow  \nOnce you're ready to go, set the workflow to **active** so it automatically runs based on your scheduled trigger.\n\n### 💡 Final Step: Test & Refine  \nRun the workflow and experiment with prompts to adjust tone, formatting, or how sources are presented. In the final part of the video, Nate shares tips for improving and scaling this workflow further.\n",
+        "height": 752,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -48
+      ],
+      "id": "59e88634-d9c9-491f-87cc-0d2a9ce4dc65",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger\nSet cadence",
+        "height": 224,
+        "width": 288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -32
+      ],
+      "id": "bfb93bb9-12f8-487b-9b33-be53d258d745",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Set your newsletter topic in the \"query\" field",
+        "height": 224,
+        "width": 208,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -32
+      ],
+      "id": "2c402fd5-fdc8-4399-9ecf-73496c6e2a42",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Generating Title & Topics",
+        "height": 224,
+        "width": 448,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        -32
+      ],
+      "id": "e27c7a40-1155-4cc8-8ebe-ca708688565b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.results.map(item => JSON.stringify(item, null, 2)).join('\\n\\n') }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert newsletter planner. You will receive three articles from the past week. Your job is to come up with a creative and fun title as well as the main topics for this newsletter. \n\n## Instructions\nThe newsletter should flow nicely, feel informative, and holistic. The topics should be 3-5 words. \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        48
+      ],
+      "id": "490479ba-cf43-41b3-873f-86862f01643f",
+      "name": "Planning Agent"
+    },
+    {
+      "parameters": {
+        "content": "## Writing Newsletter Sections",
+        "height": 224,
+        "width": 448,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2368,
+        -32
+      ],
+      "id": "4ede9d6b-5a56-4526-88ca-e6192f0caebc",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Editing Final Copy",
+        "height": 224,
+        "width": 448,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        -32
+      ],
+      "id": "02eec8f0-ce3f-49a6-b708-8e68970b47b8",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "width": 832,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        208
+      ],
+      "id": "008b73fd-a5c0-4929-bd51-85250fef5b15",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Send Draft",
+        "height": 224,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        -32
+      ],
+      "id": "da6f0a6a-b453-4801-ad4a-edf06d50060e",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "query": "={{ $json['Search Topic'] }}",
+        "options": {
+          "topic": "news",
+          "max_results": 2,
+          "time_range": "week"
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        48
+      ],
+      "id": "2f4f2343-dac0-4f29-b04d-cc5e04913234",
+      "name": "Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "jidikVZCkuQ2CpCJ",
+          "name": "zubair Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $json['output.topics'] }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        48
+      ],
+      "id": "c6936d42-0a25-4dbe-b6d1-bb32ee6ee311",
+      "name": "Search1",
+      "credentials": {
+        "tavilyApi": {
+          "id": "jidikVZCkuQ2CpCJ",
+          "name": "zubair Tavily"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA",
+          "mode": "list",
+          "cachedResultName": "Newsletter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1520,
+        48
+      ],
+      "id": "2a5cc2a6-4ac3-46e4-a877-f451441ce185",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA",
+          "mode": "list",
+          "cachedResultName": "Newsletter",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13zjXAt-REOAcpAAF9oCYyH-XMkeaPnxS73tfL44xOyA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Search Topic": "={{ $('Get row(s) in sheet').item.json['Search Topic'] }}",
+            "Status": "Done"
+          },
+          "matchingColumns": [
+            "Search Topic"
+          ],
+          "schema": [
+            {
+              "id": "Sr. No",
+              "displayName": "Sr. No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Search Topic",
+              "displayName": "Search Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3728,
+        48
+      ],
+      "id": "05f9ed95-6c2a-4170-9963-e66db2616882",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RFCJ0BfQF1fgxyrg",
+          "name": "zubairyounOus99"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        112
+      ],
+      "id": "3651a1ac-6539-4978-aa45-892ea9b82022",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Section Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Planning Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Planning Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Search1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Section Writer Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Editor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Editor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Editor Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planning Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "Planning Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search1": {
+      "main": [
+        [
+          {
+            "node": "Section Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "803ff689-4e0c-4068-b644-4f649562ad5d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-04T17:50:54.724Z",
+      "createdAt": "2025-12-04T17:50:54.724Z",
+      "role": "workflow:owner",
+      "workflowId": "BcfLb3R4ippZxQYK",
+      "projectId": "KyK2NGi92B9PeHQl"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
